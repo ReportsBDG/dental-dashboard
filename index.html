@@ -2387,169 +2387,423 @@
             }
         }
 
-        // Crear gráficos básicos
+        // Crear gráficos básicos COMPLETAMENTE ARREGLADO
         function createRevenueChart() {
-            if (typeof Chart === 'undefined') return;
-            
-            const ctx = document.getElementById('revenueChart');
-            if (!ctx) return;
-            
-            const monthlyData = {};
-            filteredData.forEach(item => {
-                if (item.timestamp && item.paidAmount) {
-                    const month = new Date(item.timestamp).toISOString().substring(0, 7);
-                    if (!monthlyData[month]) monthlyData[month] = 0;
-                    monthlyData[month] += parseFloat(item.paidAmount) || 0;
+            try {
+                if (typeof Chart === 'undefined') {
+                    console.warn('⚠️ Chart.js not available for revenue chart');
+                    return;
                 }
-            });
+                
+                const ctx = document.getElementById('revenueChart');
+                if (!ctx) {
+                    console.warn('⚠️ Revenue chart canvas not found');
+                    return;
+                }
+                
+                const monthlyData = {};
+                filteredData.forEach(item => {
+                    if (item.timestamp && item.paidAmount) {
+                        const month = new Date(item.timestamp).toISOString().substring(0, 7);
+                        if (!monthlyData[month]) monthlyData[month] = 0;
+                        monthlyData[month] += parseFloat(item.paidAmount) || 0;
+                    }
+                });
+                
+                const labels = Object.keys(monthlyData).sort();
+                const data = labels.map(month => monthlyData[month]);
+                
+                // Destruir gráfico anterior si existe
+                if (charts.revenue && typeof charts.revenue.destroy === 'function') {
+                    charts.revenue.destroy();
+                }
+                
+                charts.revenue = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels.map(month => {
+                            try {
+                                return new Date(month + '-01').toLocaleDateString('en', { month: 'short', year: 'numeric' });
+                            } catch (e) {
+                                return month;
+                            }
+                        }),
+                        datasets: [{
+                            label: 'Monthly Revenue',
+                            data: data,
+                            borderColor: '#0066CC',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#0066CC',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 8
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '
+
+        // Inicializar fechas por defecto
+        function initializeDateFilters() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
             
-            const labels = Object.keys(monthlyData).sort();
-            const data = labels.map(month => monthlyData[month]);
+            document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('toDate').value = today.toISOString().split('T')[0];
+        }
+
+        // Cerrar dropdowns al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.multi-select-container')) {
+                document.querySelectorAll('.multi-select-dropdown').forEach(dd => {
+                    dd.classList.remove('show');
+                });
+                document.querySelectorAll('.multi-select-trigger').forEach(tr => {
+                    tr.classList.remove('active');
+                });
+            }
+        });
+
+        // 🚀 INICIALIZACIÓN PRINCIPAL - CON SMART FILTERS
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM Content Loaded - Initializing ULTIMATE TITAN...');
             
-            if (charts.revenue) charts.revenue.destroy();
+            try {
+                // Inicializar fechas
+                initializeDateFilters();
+                
+                // Generar datos demo
+                generateDemoData();
+                
+                // Actualizar todo
+                updateMetrics();
+                updateCharts();
+                updatePatientTable();
+                updateColumnCounts();
+                
+                // Mostrar éxito
+                showNotification('🚀 THE ULTIMATE TITAN with SMART FILTERS is ready!', 'success');
+                console.log('✅ TITAN initialized successfully with smart filtering!');
+                
+            } catch (error) {
+                console.error('❌ Error initializing TITAN:', error);
+                showNotification('❌ Error initializing dashboard: ' + error.message, 'error');
+            }
+        });
+
+        // Log de estado
+        console.log('📋 TITAN script loaded successfully');
+        console.log('🎯 All functions defined and ready');
+        console.log('⚡ Waiting for DOM to be ready...');
+    </script>
+</body>
+</html> + value.toLocaleString();
+                                    },
+                                    color: '#718096'
+                                },
+                                grid: { color: 'rgba(226, 232, 240, 0.5)' }
+                            },
+                            x: {
+                                ticks: { color: '#718096' },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Revenue chart created successfully');
+            } catch (error) {
+                console.error('❌ Error creating revenue chart:', error);
+            }
+        }
+
+        function createOfficeChart() {
+            try {
+                if (typeof Chart === 'undefined') {
+                    console.warn('⚠️ Chart.js not available for office chart');
+                    return;
+                }
+                
+                const ctx = document.getElementById('officeChart');
+                if (!ctx) {
+                    console.warn('⚠️ Office chart canvas not found');
+                    return;
+                }
+                
+                const officeData = {};
+                filteredData.forEach(item => {
+                    if (item.office && item.paidAmount) {
+                        if (!officeData[item.office]) officeData[item.office] = 0;
+                        officeData[item.office] += parseFloat(item.paidAmount) || 0;
+                    }
+                });
+                
+                // Destruir gráfico anterior si existe
+                if (charts.office && typeof charts.office.destroy === 'function') {
+                    charts.office.destroy();
+                }
+                
+                const colors = ['#0066CC', '#00A86B', '#FF6B35', '#FFB800', '#9C27B0', '#E53E3E'];
+                
+                charts.office = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(officeData),
+                        datasets: [{
+                            data: Object.values(officeData),
+                            backgroundColor: colors.slice(0, Object.keys(officeData).length),
+                            borderWidth: 3,
+                            borderColor: '#fff',
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    color: '#718096'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 8,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.label + ': 
+
+        // Inicializar fechas por defecto
+        function initializeDateFilters() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
             
-            charts.revenue = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels.map(month => new Date(month + '-01').toLocaleDateString('en', { month: 'short', year: 'numeric' })),
-                    datasets: [{
-                        label: 'Monthly Revenue',
-                        data: data,
-                        borderColor: '#0066CC',
-                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString();
+            document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('toDate').value = today.toISOString().split('T')[0];
+        }
+
+        // Cerrar dropdowns al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.multi-select-container')) {
+                document.querySelectorAll('.multi-select-dropdown').forEach(dd => {
+                    dd.classList.remove('show');
+                });
+                document.querySelectorAll('.multi-select-trigger').forEach(tr => {
+                    tr.classList.remove('active');
+                });
+            }
+        });
+
+        // 🚀 INICIALIZACIÓN PRINCIPAL - CON SMART FILTERS
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM Content Loaded - Initializing ULTIMATE TITAN...');
+            
+            try {
+                // Inicializar fechas
+                initializeDateFilters();
+                
+                // Generar datos demo
+                generateDemoData();
+                
+                // Actualizar todo
+                updateMetrics();
+                updateCharts();
+                updatePatientTable();
+                updateColumnCounts();
+                
+                // Mostrar éxito
+                showNotification('🚀 THE ULTIMATE TITAN with SMART FILTERS is ready!', 'success');
+                console.log('✅ TITAN initialized successfully with smart filtering!');
+                
+            } catch (error) {
+                console.error('❌ Error initializing TITAN:', error);
+                showNotification('❌ Error initializing dashboard: ' + error.message, 'error');
+            }
+        });
+
+        // Log de estado
+        console.log('📋 TITAN script loaded successfully');
+        console.log('🎯 All functions defined and ready');
+        console.log('⚡ Waiting for DOM to be ready...');
+    </script>
+</body>
+</html> + context.parsed.toLocaleString();
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
-        }
-
-        function createOfficeChart() {
-            if (typeof Chart === 'undefined') return;
-            
-            const ctx = document.getElementById('officeChart');
-            if (!ctx) return;
-            
-            const officeData = {};
-            filteredData.forEach(item => {
-                if (item.office && item.paidAmount) {
-                    if (!officeData[item.office]) officeData[item.office] = 0;
-                    officeData[item.office] += parseFloat(item.paidAmount) || 0;
-                }
-            });
-            
-            if (charts.office) charts.office.destroy();
-            
-            charts.office = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(officeData),
-                    datasets: [{
-                        data: Object.values(officeData),
-                        backgroundColor: ['#0066CC', '#00A86B', '#FF6B35', '#FFB800', '#9C27B0']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    }
-                }
-            });
+                });
+                
+                console.log('✅ Office chart created successfully');
+            } catch (error) {
+                console.error('❌ Error creating office chart:', error);
+            }
         }
 
         function createCarrierChart() {
-            if (typeof Chart === 'undefined') return;
-            
-            const ctx = document.getElementById('carrierChart');
-            if (!ctx) return;
-            
-            const carrierData = {};
-            filteredData.forEach(item => {
-                if (item.carrier) {
-                    if (!carrierData[item.carrier]) carrierData[item.carrier] = 0;
-                    carrierData[item.carrier]++;
+            try {
+                if (typeof Chart === 'undefined') {
+                    console.warn('⚠️ Chart.js not available for carrier chart');
+                    return;
                 }
-            });
-            
-            const sortedCarriers = Object.entries(carrierData)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 8);
-            
-            if (charts.carrier) charts.carrier.destroy();
-            
-            charts.carrier = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: sortedCarriers.map(([name]) => name.length > 15 ? name.substring(0, 15) + '...' : name),
-                    datasets: [{
-                        label: 'Claims Count',
-                        data: sortedCarriers.map(([,count]) => count),
-                        backgroundColor: '#00A86B',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { 
-                        y: { beginAtZero: true }
+                
+                const ctx = document.getElementById('carrierChart');
+                if (!ctx) {
+                    console.warn('⚠️ Carrier chart canvas not found');
+                    return;
+                }
+                
+                const carrierData = {};
+                filteredData.forEach(item => {
+                    if (item.carrier) {
+                        if (!carrierData[item.carrier]) carrierData[item.carrier] = 0;
+                        carrierData[item.carrier]++;
                     }
+                });
+                
+                const sortedCarriers = Object.entries(carrierData)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 8);
+                
+                // Destruir gráfico anterior si existe
+                if (charts.carrier && typeof charts.carrier.destroy === 'function') {
+                    charts.carrier.destroy();
                 }
-            });
+                
+                charts.carrier = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: sortedCarriers.map(([name]) => name.length > 15 ? name.substring(0, 15) + '...' : name),
+                        datasets: [{
+                            label: 'Claims Count',
+                            data: sortedCarriers.map(([,count]) => count),
+                            backgroundColor: '#00A86B',
+                            borderRadius: 8,
+                            borderSkipped: false,
+                            hoverBackgroundColor: '#FF6B35'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 8
+                            }
+                        },
+                        scales: { 
+                            y: { 
+                                beginAtZero: true,
+                                ticks: { color: '#718096' },
+                                grid: { color: 'rgba(226, 232, 240, 0.5)' }
+                            },
+                            x: {
+                                ticks: { color: '#718096' },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Carrier chart created successfully');
+            } catch (error) {
+                console.error('❌ Error creating carrier chart:', error);
+            }
         }
 
         function createStatusChart() {
-            if (typeof Chart === 'undefined') return;
-            
-            const ctx = document.getElementById('statusChart');
-            if (!ctx) return;
-            
-            const statusData = {};
-            filteredData.forEach(item => {
-                if (item.claimStatus) {
-                    if (!statusData[item.claimStatus]) statusData[item.claimStatus] = 0;
-                    statusData[item.claimStatus]++;
+            try {
+                if (typeof Chart === 'undefined') {
+                    console.warn('⚠️ Chart.js not available for status chart');
+                    return;
                 }
-            });
-            
-            if (charts.status) charts.status.destroy();
-            
-            charts.status = new Chart(ctx, {
-                type: 'polarArea',
-                data: {
-                    labels: Object.keys(statusData),
-                    datasets: [{
-                        data: Object.values(statusData),
-                        backgroundColor: ['#0066CC80', '#00A86B80', '#FF6B3580', '#FFB80080']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
+                
+                const ctx = document.getElementById('statusChart');
+                if (!ctx) {
+                    console.warn('⚠️ Status chart canvas not found');
+                    return;
+                }
+                
+                const statusData = {};
+                filteredData.forEach(item => {
+                    if (item.claimStatus) {
+                        if (!statusData[item.claimStatus]) statusData[item.claimStatus] = 0;
+                        statusData[item.claimStatus]++;
                     }
+                });
+                
+                // Destruir gráfico anterior si existe
+                if (charts.status && typeof charts.status.destroy === 'function') {
+                    charts.status.destroy();
                 }
-            });
+                
+                const colors = ['#0066CC80', '#00A86B80', '#FF6B3580', '#FFB80080'];
+                
+                charts.status = new Chart(ctx, {
+                    type: 'polarArea',
+                    data: {
+                        labels: Object.keys(statusData),
+                        datasets: [{
+                            data: Object.values(statusData),
+                            backgroundColor: colors.slice(0, Object.keys(statusData).length),
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    color: '#718096'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 8
+                            }
+                        }
+                    }
+                });
+                
+                console.log('✅ Status chart created successfully');
+            } catch (error) {
+                console.error('❌ Error creating status chart:', error);
+            }
         }
 
         // Inicializar fechas por defecto
