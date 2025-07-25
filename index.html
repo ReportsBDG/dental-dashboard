@@ -58,26 +58,28 @@
             transition: var(--transition);
         }
 
-        /* HAMBURGER MENU ÉPICO */
+        /* HAMBURGER MENU REUBICADO */
         .hamburger-menu {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
             border: none;
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 12px;
+            padding: 12px 20px;
             cursor: pointer;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow);
             transition: var(--transition);
-            font-size: 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .hamburger-menu:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: var(--shadow-xl), var(--glow);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--glow);
         }
 
         .sidebar {
@@ -1184,12 +1186,12 @@
     </style>
 </head>
 <body>
-    <!-- HAMBURGER MENU BUTTON -->
-    <button class="hamburger-menu" id="hamburgerBtn">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <!-- SIDEBAR -->
+        <!-- FILTERS COMPACTOS -->
+        <div class="filters animate-slide-left">
+            <div class="filter-group">
+                <label class="filter-label">📅 From Date</label>
+                <input type="date" class="filter-input" id="fromDate">
+        <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <button class="close-sidebar" id="closeSidebar">
@@ -1327,34 +1329,6 @@
     </button>
 
     <div class="container">
-        <!-- HEADER ÉPICO -->
-        <header class="header animate-slide-bottom">
-            <div class="header-content">
-                <h1>🦷 Dental Analytics Dashboard</h1>
-                <p>The Ultimate Beast - Real-time insights for your dental practice</p>
-                <div class="header-stats">
-                    <div class="header-stat">
-                        <span class="header-stat-value" id="headerTotalRevenue">$27,477</span>
-                        <span class="header-stat-label">Total Revenue</span>
-                    </div>
-                    <div class="header-stat">
-                        <span class="header-stat-value" id="headerTotalClaims">247</span>
-                        <span class="header-stat-label">Claims Processed</span>
-                    </div>
-                    <div class="header-stat">
-                        <span class="header-stat-value" id="headerActiveOffices">5</span>
-                        <span class="header-stat-label">Active Offices</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- FILTERS COMPACTOS -->
-        <div class="filters animate-slide-left">
-            <div class="filter-group">
-                <label class="filter-label">📅 From Date</label>
-                <input type="date" class="filter-input" id="fromDate">
-            </div>
             <div class="filter-group">
                 <label class="filter-label">📅 To Date</label>
                 <input type="date" class="filter-input" id="toDate">
@@ -1362,6 +1336,9 @@
             <div class="filter-group">
                 <label class="filter-label">⚡ Quick Actions</label>
                 <div class="filter-actions">
+                    <button class="hamburger-menu" id="hamburgerBtn">
+                        <i class="fas fa-cog"></i> Advanced
+                    </button>
                     <button class="btn btn-primary" id="applyBtn">
                         <i class="fas fa-play"></i> Apply
                     </button>
@@ -2005,6 +1982,8 @@
 
         // Limpiar filtros
         async function clearFilters() {
+            console.log('Clearing filters...');
+            
             document.getElementById('fromDate').value = '';
             document.getElementById('toDate').value = '';
             document.getElementById('patientSearch').value = '';
@@ -2013,15 +1992,22 @@
             selectedFilters = { offices: [], carriers: [], statuses: [] };
             
             // Desmarcar checkboxes
-            document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(cb => {
+            document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(function(cb) {
                 cb.checked = false;
-                cb.closest('.multi-select-option').classList.remove('selected');
+                const option = cb.closest('.multi-select-option');
+                if (option) {
+                    option.classList.remove('selected');
+                }
             });
 
             // Actualizar textos
-            document.getElementById('officesText').textContent = 'All Offices';
-            document.getElementById('carriersText').textContent = 'All Carriers';
-            document.getElementById('statusText').textContent = 'All Statuses';
+            const officesText = document.getElementById('officesText');
+            const carriersText = document.getElementById('carriersText');
+            const statusText = document.getElementById('statusText');
+            
+            if (officesText) officesText.textContent = 'All Offices';
+            if (carriersText) carriersText.textContent = 'All Carriers';
+            if (statusText) statusText.textContent = 'All Statuses';
 
             // Recargar datos
             const success = await fetchRealData();
@@ -2495,8 +2481,9 @@
         }
 
         function filterByOffice(office) {
-            // Actualizar multi-select
-            const checkbox = document.querySelector(`#offices-${office.replace(/\s+/g, '\\ ')}`);
+            // Actualizar multi-select si existe
+            const sanitizedOffice = office.replace(/[^a-zA-Z0-9-]/g, '-');
+            const checkbox = document.querySelector('#offices-' + sanitizedOffice);
             if (checkbox) {
                 checkbox.checked = true;
                 updateMultiSelectSelection('offices');
@@ -2506,7 +2493,8 @@
         }
 
         function filterByCarrier(carrier) {
-            const checkbox = document.querySelector(`#carriers-${carrier.replace(/\s+/g, '\\ ')}`);
+            const sanitizedCarrier = carrier.replace(/[^a-zA-Z0-9-]/g, '-');
+            const checkbox = document.querySelector('#carriers-' + sanitizedCarrier);
             if (checkbox) {
                 checkbox.checked = true;
                 updateMultiSelectSelection('carriers');
@@ -2516,7 +2504,8 @@
         }
 
         function filterByStatus(status) {
-            const checkbox = document.querySelector(`#statuses-${status}`);
+            const sanitizedStatus = status.replace(/[^a-zA-Z0-9-]/g, '-');
+            const checkbox = document.querySelector('#statuses-' + sanitizedStatus);
             if (checkbox) {
                 checkbox.checked = true;
                 updateMultiSelectSelection('statuses');
