@@ -1413,7 +1413,7 @@
                         <div class="active-filter-tag">
                             <i class="fas fa-calendar"></i>
                             From: ${fromDate}
-                            <button class="remove-filter" onclick="removeFilter('fromDate')">×</button>
+                            <button class="remove-filter" data-filter-type="fromDate">×</button>
                         </div>
                     `;
                 }
@@ -1423,7 +1423,7 @@
                         <div class="active-filter-tag">  
                             <i class="fas fa-calendar"></i>
                             To: ${toDate}
-                            <button class="remove-filter" onclick="removeFilter('toDate')">×</button>
+                            <button class="remove-filter" data-filter-type="toDate">×</button>
                         </div>
                     `;
                 }
@@ -1442,19 +1442,33 @@
                             <div class="active-filter-tag">
                                 <i class="${icons[filterType]}"></i>
                                 ${filterType.charAt(0).toUpperCase() + filterType.slice(1)}: ${displayText}
-                                <button class="remove-filter" onclick="removeFilter('${filterType}')">×</button>
+                                <button class="remove-filter" data-filter-type="${filterType}">×</button>
                             </div>
                         `;
                     }
                 });
                 
                 filtersHTML += `
-                    <button class="clear-all-filters" onclick="clearAllFilters()">
+                    <button class="clear-all-filters" id="clearAllFiltersBtn">
                         <i class="fas fa-trash"></i> Clear All
                     </button>
                 `;
                 
                 activeFiltersList.innerHTML = filtersHTML;
+                
+                // Agregar event listeners a los botones remove
+                activeFiltersList.querySelectorAll('.remove-filter').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        removeFilter(this.dataset.filterType);
+                    });
+                });
+                
+                // Event listener para clear all
+                const clearAllBtn = document.getElementById('clearAllFiltersBtn');
+                if (clearAllBtn) {
+                    clearAllBtn.addEventListener('click', clearAllFilters);
+                }
+                
             } else {
                 activeFiltersBar.classList.remove('show');
             }
@@ -1584,12 +1598,19 @@
                 const sortedValues = Object.entries(values).sort(([,a], [,b]) => b - a);
                 
                 optionsContainer.innerHTML = sortedValues.map(([value, count]) => `
-                    <div class="filter-option" data-value="${value}" onclick="toggleFilterOption('${filterType}', '${value}')">
+                    <div class="filter-option" data-value="${value}" data-filter-type="${filterType}">
                         <input type="checkbox" class="filter-checkbox">
                         <span class="filter-option-text">${value}</span>
                         <span class="filter-count">${count}</span>
                     </div>
                 `).join('');
+                
+                // Agregar event listeners a las opciones
+                optionsContainer.querySelectorAll('.filter-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        toggleFilterOption(this.dataset.filterType, this.dataset.value);
+                    });
+                });
             });
             
             console.log('✅ Dropdown options populated');
