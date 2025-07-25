@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦷 Dental Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Verificar que Chart.js se cargó correctamente
+        if (typeof Chart === 'undefined') {
+            console.error('❌ Chart.js failed to load');
+        } else {
+            console.log('✅ Chart.js v3.9.1 loaded successfully');
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #0066CC;
+            --primary-light: #4A90E2;
+            --secondary: #00A86B;
+            --accent: #FF6B35;
+            --warning: #FFB800;
+            --error: #E53E3E;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text: #1A202C;
+            --text-light: #718096;
+            --border: #E2E8F0;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #E8F4FD 100%);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* FILTERS */
+        .filters {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-input, .filter-select {
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* METRICS */
+        .metrics-hero {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-label {
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        .metric-change {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 168, 107, 0.1);
+            color: var(--secondary);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .charts-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .data-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .chart-card, .data-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover, .data-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chart-header, .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-title, .data-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-container.large {
+            height: 400px;
+        }
+
+        /* TABLE */
+        .patients-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .patients-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .patients-table th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 15px 12px;
+            font-weight: 600;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .patients-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .patients-table tr:hover {
+            background: rgba(0, 102, 204, 0.05);
+        }
+
+        /* MINI STATS */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mini-stat {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .mini-stat:hover {
+            transform: translateY(-3px);
+        }
+
+        .mini-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .mini-stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* SEARCH */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-balance { background: rgba(255, 107, 53, 0.1); color: var(--accent); }
+        .status-none { background: rgba(113, 128, 150, 0.1); color: var(--text-light); }
+        .status-overpayment { background: rgba(0, 168, 107, 0.1); color: var(--secondary); }
+        .status-credit { background: rgba(0, 102, 204, 0.1); color: var(--primary); }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* STATUS INDICATOR */
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        /* EXPORT BUTTON */
+        .export-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* LOADING */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .metric-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-indicator" id="statusIndicator">
+        🟢 Connected - Real-time Data
+    </div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🦷 Dental Analytics Dashboard</h1>
+                <p>Real-time insights for your dental practice</p>
+            </div>
+        </header>
+
+        <!-- FILTERS -->
+        <div class="filters">
+            <div class="filter-group">
+                <label class="filter-label">📅 From Date</label>
+                <input type="date" class="filter-input" id="fromDate">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">📅 To Date</label>
+                <input type="date" class="filter-input" id="toDate">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">🏢 Office</label>
+                <select class="filter-select" id="officeFilter">
+                    <option value="all">All Offices</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">🏥 Carrier</label>
+                <select class="filter-select" id="carrierFilter">
+                    <option value="all">All Carriers</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">📋 Status</label>
+                <select class="filter-select" id="statusFilter">
+                    <option value="all">All Statuses</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">⚡ Actions</label>
+                <div class="filter-actions">
+                    <button class="btn btn-primary" id="applyBtn">Apply</button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics-hero">
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #00A86B, #00D084);">💰</div>
+                <div class="metric-value" id="totalRevenue">$27,477</div>
+                <div class="metric-label">Total Revenue</div>
+                <div class="metric-change">+12.3%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #0066CC, #4A90E2);">📊</div>
+                <div class="metric-value" id="totalClaims">247</div>
+                <div class="metric-label">Claims Processed</div>
+                <div class="metric-change">+8.7%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #FF6B35, #FF8A65);">⭐</div>
+                <div class="metric-value" id="avgClaim">$196</div>
+                <div class="metric-label">Average Claim</div>
+                <div class="metric-change">+5.2%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" style="background: linear-gradient(135deg, #9C27B0, #BA68C8);">🏢</div>
+                <div class="metric-value" id="activeOffices">5</div>
+                <div class="metric-label">Active Offices</div>
+                <div class="metric-change">+100%</div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- CHARTS SECTION -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">📈 Monthly Revenue Flow</h3>
+                    </div>
+                    <div class="chart-container large">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">🏢 Office Performance</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="officeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">📋 Claims Pipeline</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">🏥 Top Insurance Carriers</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="carrierChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATA SECTION -->
+            <div class="data-section">
+                <!-- MINI STATS -->
+                <div class="data-card">
+                    <div class="data-header">
+                        <h3 class="data-title">📊 Quick Stats</h3>
+                    </div>
+                    <div class="mini-stats">
+                        <div class="mini-stat">
+                            <div class="mini-stat-value" id="todayClaims">12</div>
+                            <div class="mini-stat-label">Today</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-value" id="weekClaims">89</div>
+                            <div class="mini-stat-label">This Week</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-value" id="monthClaims">247</div>
+                            <div class="mini-stat-label">This Month</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PATIENT LIST -->
+                <div class="data-card">
+                    <div class="data-header">
+                        <h3 class="data-title">👥 Patient List</h3>
+                        <button class="export-btn" id="exportBtn">📥 Export CSV</button>
+                    </div>
+                    
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="patientSearch" placeholder="Search patients...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+
+                    <div class="patients-table-container">
+                        <table class="patients-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Office</th>
+                                    <th>Carrier</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientsTableBody">
+                                <!-- Patients data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🚀 CONFIGURACIÓN
+        const API_CONFIG = {
+            WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbzTg6wQCsc_sIMBKSk_4vpGcbhrS1kuUiNyPyvtzLsoVktqAhZC-XsLaC-TaGX_rW4d/exec',
+            POLLING_INTERVAL: 30000,
+            CACHE_DURATION: 300000
+        };
+
+        // Variables globales
+        let rawData = [];
+        let filteredData = [];
+        let charts = {};
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Datos iniciales
+        const offices = ["Leon Springs", "Kona Coast Dental Care", "Hollywood Park", "Potranco", "Pleasanton"];
+        const carriers = ["HDS", "HMSA", "Blue Cross Blue Shield", "Delta Dental", "Ameritas", "BCBS"];
+        const statuses = ["Balance", "None", "Overpayment", "Credit"];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Inicializando LA BESTIA...');
+            
+            initializeDateFilters();
+            initializeEventListeners();
+            
+            // Intentar cargar datos reales
+            const success = await fetchRealData();
+            
+            if (!success) {
+                console.log('⚠️ Using demo data as fallback');
+                generateDemoData();
+            }
+            
+            initializeFilters();
+            initializeCharts();
+            updateMetrics();
+            updatePatientTable();
+            startRealTimeUpdates();
+        });
+
+        // Configurar event listeners
+        function initializeEventListeners() {
+            document.getElementById('applyBtn').addEventListener('click', applyFilters);
+            document.getElementById('clearBtn').addEventListener('click', clearFilters);
+            document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+            document.getElementById('patientSearch').addEventListener('input', function() {
+                currentPage = 1;
+                updatePatientTable();
+            });
+        }
+
+        // Inicializar filtros de fecha
+        function initializeDateFilters() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('toDate').value = today.toISOString().split('T')[0];
+        }
+
+        // Obtener datos reales
+        async function fetchRealData(filters = {}) {
+            try {
+                const params = new URLSearchParams();
+                if (filters.fromDate) params.append('fromDate', filters.fromDate);
+                if (filters.toDate) params.append('toDate', filters.toDate);
+                if (filters.office && filters.office !== 'all') params.append('office', filters.office);
+                if (filters.carrier && filters.carrier !== 'all') params.append('carrier', filters.carrier);
+                if (filters.claimStatus && filters.claimStatus !== 'all') params.append('claimStatus', filters.claimStatus);
+
+                const url = API_CONFIG.WEB_APP_URL + '?' + params.toString();
+                console.log('🌐 Fetching data from:', url);
+
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Error fetching data');
+                }
+
+                console.log('✅ Data fetched successfully:', result.filteredRecords, 'records');
+
+                rawData = result.data;
+                filteredData = result.data;
+
+                updateStatusIndicator('🟢 Connected - Real Data Loaded');
+                showNotification('🎉 Loaded ' + result.filteredRecords + ' records from Google Sheets!');
+
+                return true;
+
+            } catch (error) {
+                console.error('❌ Error fetching data:', error);
+                updateStatusIndicator('🔴 Connection Error');
+                return false;
+            }
+        }
+
+        // Generar datos demo
+        function generateDemoData() {
+            rawData = [
+                {
+                    timestamp: "2025-06-13T18:31:59.049Z",
+                    carrier: "HDS",
+                    office: "Leon Springs",
+                    patient: "BARRACLOUGH, NANCY",
+                    paidAmount: 137.2,
+                    claimStatus: "Balance"
+                },
+                {
+                    timestamp: "2025-07-10T16:56:14.849Z",
+                    carrier: "HDS",
+                    office: "Kona Coast Dental Care",
+                    patient: "BRACE, VANNESSA",
+                    paidAmount: 190,
+                    claimStatus: "None"
+                }
+            ];
+
+            // Generar más datos
+            for (let i = 2; i < 247; i++) {
+                rawData.push({
+                    timestamp: new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000).toISOString(),
+                    carrier: carriers[Math.floor(Math.random() * carriers.length)],
+                    office: offices[Math.floor(Math.random() * offices.length)],
+                    patient: "Patient " + (i + 1),
+                    paidAmount: Math.random() * 500 + 50,
+                    claimStatus: statuses[Math.floor(Math.random() * statuses.length)]
+                });
+            }
+
+            filteredData = rawData;
+        }
+
+        // Inicializar filtros
+        function initializeFilters() {
+            const officeFilter = document.getElementById('officeFilter');
+            const carrierFilter = document.getElementById('carrierFilter');
+            const statusFilter = document.getElementById('statusFilter');
+
+            // Limpiar filtros
+            officeFilter.innerHTML = '<option value="all">All Offices</option>';
+            carrierFilter.innerHTML = '<option value="all">All Carriers</option>';
+            statusFilter.innerHTML = '<option value="all">All Statuses</option>';
+
+            // Poblar con datos únicos
+            const uniqueOffices = [...new Set(rawData.map(d => d.office).filter(Boolean))];
+            const uniqueCarriers = [...new Set(rawData.map(d => d.carrier).filter(Boolean))];
+            const uniqueStatuses = [...new Set(rawData.map(d => d.claimStatus).filter(Boolean))];
+
+            uniqueOffices.forEach(office => {
+                const option = document.createElement('option');
+                option.value = office;
+                option.textContent = office;
+                officeFilter.appendChild(option);
+            });
+
+            uniqueCarriers.forEach(carrier => {
+                const option = document.createElement('option');
+                option.value = carrier;
+                option.textContent = carrier;
+                carrierFilter.appendChild(option);
+            });
+
+            uniqueStatuses.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                statusFilter.appendChild(option);
+            });
+        }
+
+        // Aplicar filtros
+        async function applyFilters() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const officeFilter = document.getElementById('officeFilter').value;
+            const carrierFilter = document.getElementById('carrierFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            if (API_CONFIG.WEB_APP_URL.includes('script.google.com')) {
+                const filters = {
+                    fromDate,
+                    toDate,
+                    office: officeFilter,
+                    carrier: carrierFilter,
+                    claimStatus: statusFilter
+                };
+
+                const success = await fetchRealData(filters);
+                if (success) {
+                    initializeFilters();
+                    initializeCharts();
+                    updateMetrics();
+                    updatePatientTable();
+                    showNotification('🔍 Filters applied! ' + filteredData.length + ' records found');
+                    return;
+                }
+            }
+
+            // Filtrado local
+            filteredData = rawData.filter(item => {
+                const itemDate = new Date(item.timestamp).toISOString().split('T')[0];
+                
+                return (!fromDate || itemDate >= fromDate) &&
+                       (!toDate || itemDate <= toDate) &&
+                       (officeFilter === 'all' || item.office === officeFilter) &&
+                       (carrierFilter === 'all' || item.carrier === carrierFilter) &&
+                       (statusFilter === 'all' || item.claimStatus === statusFilter);
+            });
+
+            currentPage = 1;
+            updateMetrics();
+            updateCharts();
+            updatePatientTable();
+            showNotification('🔍 Filters applied! ' + filteredData.length + ' records found');
+        }
+
+        // Limpiar filtros
+        async function clearFilters() {
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            document.getElementById('officeFilter').value = 'all';
+            document.getElementById('carrierFilter').value = 'all';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('patientSearch').value = '';
+
+            const success = await fetchRealData();
+            if (success) {
+                initializeFilters();
+            } else {
+                filteredData = rawData;
+            }
+
+            currentPage = 1;
+            updateMetrics();
+            updateCharts();
+            updatePatientTable();
+            showNotification('🧹 All filters cleared!');
+        }
+
+        // Actualizar métricas
+        function updateMetrics() {
+            const totalRevenue = filteredData.reduce((sum, item) => sum + (parseFloat(item.paidAmount) || 0), 0);
+            const totalClaims = filteredData.length;
+            const avgClaim = totalClaims > 0 ? totalRevenue / totalClaims : 0;
+            const activeOffices = [...new Set(filteredData.map(d => d.office).filter(Boolean))].length;
+
+            // Calcular mini stats
+            const today = new Date().toISOString().split('T')[0];
+            const thisWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const thisMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            const todayClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] === today).length;
+            const weekClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] >= thisWeek).length;
+            const monthClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] >= thisMonth).length;
+
+            // Actualizar UI
+            document.getElementById('totalRevenue').textContent = '$' + Math.round(totalRevenue).toLocaleString();
+            document.getElementById('totalClaims').textContent = totalClaims.toLocaleString();
+            document.getElementById('avgClaim').textContent = '$' + Math.round(avgClaim).toLocaleString();
+            document.getElementById('activeOffices').textContent = activeOffices.toString();
+            document.getElementById('todayClaims').textContent = todayClaims.toString();
+            document.getElementById('weekClaims').textContent = weekClaims.toString();
+            document.getElementById('monthClaims').textContent = monthClaims.toString();
+        }
+
+        // Inicializar gráficos
+        function initializeCharts() {
+            if (typeof Chart === 'undefined') {
+                console.warn('⚠️ Chart.js not available, skipping charts');
+                return;
+            }
+            console.log('📊 Initializing charts...');
+            createRevenueChart();
+            createOfficeChart();
+            createCarrierChart();
+            createStatusChart();
+        }
+
+        // Gráfico de revenue
+        function createRevenueChart() {
+            if (typeof Chart === 'undefined') {
+                console.warn('⚠️ Chart is not defined, skipping revenue chart');
+                return;
+            }
+
+            const ctx = document.getElementById('revenueChart');
+            if (!ctx) {
+                console.warn('⚠️ Revenue chart canvas not found');
+                return;
+            }
+
+            const context = ctx.getContext('2d');
+            
+            const monthlyData = {};
+            filteredData.forEach(item => {
+                if (item.timestamp && item.paidAmount) {
+                    const month = new Date(item.timestamp).toISOString().substring(0, 7);
+                    if (!monthlyData[month]) monthlyData[month] = 0;
+                    monthlyData[month] += parseFloat(item.paidAmount) || 0;
+                }
+            });
+
+            const labels = Object.keys(monthlyData).sort();
+            const data = labels.map(month => monthlyData[month]);
+
+            if (charts.revenue) charts.revenue.destroy();
+
+            charts.revenue = new Chart(context, {
+                type: 'line',
+                data: {
+                    labels: labels.map(month => {
+                        try {
+                            return new Date(month + '-01').toLocaleDateString('en', { month: 'short', year: 'numeric' });
+                        } catch (e) {
+                            return month;
+                        }
+                    }),
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: data,
+                        borderColor: '#0066CC',
+                        backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de oficinas
+        function createOfficeChart() {
+            const ctx = document.getElementById('officeChart').getContext('2d');
+            
+            const officeData = {};
+            filteredData.forEach(item => {
+                if (item.office && item.paidAmount) {
+                    if (!officeData[item.office]) officeData[item.office] = 0;
+                    officeData[item.office] += parseFloat(item.paidAmount) || 0;
+                }
+            });
+
+            if (charts.office) charts.office.destroy();
+
+            charts.office = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(officeData),
+                    datasets: [{
+                        data: Object.values(officeData),
+                        backgroundColor: ['#0066CC', '#00A86B', '#FF6B35', '#FFB800', '#9C27B0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de carriers
+        function createCarrierChart() {
+            const ctx = document.getElementById('carrierChart').getContext('2d');
+            
+            const carrierData = {};
+            filteredData.forEach(item => {
+                if (item.carrier) {
+                    if (!carrierData[item.carrier]) carrierData[item.carrier] = 0;
+                    carrierData[item.carrier]++;
+                }
+            });
+
+            const sortedCarriers = Object.entries(carrierData)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 8);
+
+            if (charts.carrier) charts.carrier.destroy();
+
+            charts.carrier = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedCarriers.map(([name]) => name.length > 15 ? name.substring(0, 15) + '...' : name),
+                    datasets: [{
+                        label: 'Claims Count',
+                        data: sortedCarriers.map(([,count]) => count),
+                        backgroundColor: '#00A86B'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        // Gráfico de estados
+        function createStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            const statusData = {};
+            filteredData.forEach(item => {
+                if (item.claimStatus) {
+                    if (!statusData[item.claimStatus]) statusData[item.claimStatus] = 0;
+                    statusData[item.claimStatus]++;
+                }
+            });
+
+            if (charts.status) charts.status.destroy();
+
+            charts.status = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(statusData),
+                    datasets: [{
+                        data: Object.values(statusData),
+                        backgroundColor: ['#0066CC80', '#00A86B80', '#FF6B3580', '#FFB80080']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Actualizar gráficos
+        function updateCharts() {
+            if (typeof Chart === 'undefined') {
+                console.warn('⚠️ Chart.js not available for updates');
+                return;
+            }
+            initializeCharts();
+        }
+
+        // Actualizar tabla de pacientes
+        function updatePatientTable() {
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            let displayData = filteredData;
+
+            if (searchTerm) {
+                displayData = filteredData.filter(item =>
+                    (item.patient && item.patient.toLowerCase().includes(searchTerm)) ||
+                    (item.office && item.office.toLowerCase().includes(searchTerm)) ||
+                    (item.carrier && item.carrier.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = displayData.slice(startIndex, endIndex);
+
+            const tbody = document.getElementById('patientsTableBody');
+            tbody.innerHTML = '';
+
+            pageData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = 
+                    '<td>' + (item.patient || 'N/A') + '</td>' +
+                    '<td>' + (item.office || 'N/A') + '</td>' +
+                    '<td>' + (item.carrier && item.carrier.length > 20 ? item.carrier.substring(0, 20) + '...' : item.carrier || 'N/A') + '</td>' +
+                    '<td>$' + (parseFloat(item.paidAmount) || 0).toFixed(2) + '</td>' +
+                    '<td><span class="status-badge status-' + (item.claimStatus || 'none').toLowerCase() + '">' + (item.claimStatus || 'N/A') + '</span></td>' +
+                    '<td>' + (item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A') + '</td>';
+                tbody.appendChild(row);
+            });
+
+            updatePagination(displayData.length);
+        }
+
+        // Actualizar paginación
+        function updatePagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            // Botón anterior
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = '‹ Previous';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePatientTable();
+                }
+            };
+            pagination.appendChild(prevBtn);
+
+            // Números de página
+            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i;
+                pageBtn.className = i === currentPage ? 'active' : '';
+                pageBtn.onclick = function() {
+                    currentPage = i;
+                    updatePatientTable();
+                };
+                pagination.appendChild(pageBtn);
+            }
+
+            // Botón siguiente
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = 'Next ›';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePatientTable();
+                }
+            };
+            pagination.appendChild(nextBtn);
+        }
+
+        // Exportar a CSV
+        function exportToCSV() {
+            const headers = ['Patient', 'Office', 'Carrier', 'Paid Amount', 'Status', 'Date'];
+            const csvContent = [
+                headers.join(','),
+                ...filteredData.map(item => [
+                    '"' + (item.patient || '') + '"',
+                    '"' + (item.office || '') + '"',
+                    '"' + (item.carrier || '') + '"',
+                    (parseFloat(item.paidAmount) || 0),
+                    '"' + (item.claimStatus || '') + '"',
+                    (item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '')
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'dental_analytics_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('📥 CSV exported successfully!');
+        }
+
+        // Actualizaciones en tiempo real
+        function startRealTimeUpdates() {
+            setInterval(async function() {
+                if (Math.random() > 0.8) {
+                    const success = await fetchRealData();
+                    if (success) {
+                        updateMetrics();
+                        updateCharts();
+                        updatePatientTable();
+                    }
+                }
+            }, API_CONFIG.POLLING_INTERVAL);
+        }
+
+        // Mostrar notificaciones
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = 
+                'position: fixed; top: 80px; right: 20px; background: linear-gradient(135deg, #00A86B, #00D084); ' +
+                'color: white; padding: 15px 25px; border-radius: 12px; font-weight: 600; z-index: 1001; ' +
+                'box-shadow: 0 8px 25px rgba(0, 168, 107, 0.3); max-width: 300px;';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(function() {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 4000);
+        }
+
+        // Actualizar indicador de estado
+        function updateStatusIndicator(message) {
+            const indicator = document.getElementById('statusIndicator');
+            if (indicator) {
+                indicator.textContent = message;
+            }
+        }
+
+        // Easter egg
+        document.querySelector('.header h1').addEventListener('click', function() {
+            showNotification('🎉 Dashboard crafted with ❤️ and lots of ☕!');
+        });
+
+        console.log('🚀 DENTAL DASHBOARD CLEAN VERSION LOADED!');
+    </script>
+</body>
+</html>
