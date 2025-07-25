@@ -452,32 +452,6 @@
             font-weight: 500;
         }
 
-        .header-stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 25px;
-            flex-wrap: wrap;
-        }
-
-        .header-stat {
-            text-align: center;
-        }
-
-        .header-stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            display: block;
-        }
-
-        .header-stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
         /* FILTERS COMPACTOS */
         .filters {
             background: var(--card);
@@ -1156,14 +1130,6 @@
                 padding: 10px 8px;
                 font-size: 0.8rem;
             }
-            
-            .header-stats {
-                gap: 20px;
-            }
-            
-            .header-stat-value {
-                font-size: 1.5rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -1222,6 +1188,28 @@
             }
             to {
                 opacity: 1;
+            }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
             }
         }
 
@@ -1574,7 +1562,7 @@
     </div>
 
     <script>
-        // 🚀 CONFIGURACIÓN GALÁCTICA
+        // 🚀 CONFIGURACIÓN GALÁCTICA - CÓDIGO COMPLETAMENTE LIMPIO
         const API_CONFIG = {
             WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbzTg6wQCsc_sIMBKSk_4vpGcbhrS1kuUiNyPyvtzLsoVktqAhZC-XsLaC-TaGX_rW4d/exec',
             POLLING_INTERVAL: 30000,
@@ -1608,137 +1596,163 @@
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('🚀 Inicializando THE ULTIMATE TITAN...');
             
-            initializeDateFilters();
-            initializeEventListeners();
-            initializeSidebars();
-            
-            // Intentar cargar datos reales
-            const success = await fetchRealData();
-            
-            if (!success) {
-                console.log('⚠️ Using demo data as fallback');
-                generateDemoData();
+            try {
+                initializeDateFilters();
+                initializeEventListeners();
+                initializeSidebars();
+                
+                // Intentar cargar datos reales
+                const success = await fetchRealData();
+                
+                if (!success) {
+                    console.log('⚠️ Using demo data as fallback');
+                    generateDemoData();
+                }
+                
+                initializeFilters();
+                initializeCharts();
+                updateMetrics();
+                updatePatientTable();
+                startRealTimeUpdates();
+                
+                // Animaciones de entrada
+                setTimeout(() => addAnimationClasses(), 100);
+                
+                console.log('✅ TITAN initialized successfully!');
+            } catch (error) {
+                console.error('❌ Error initializing TITAN:', error);
+                showNotification('Error initializing dashboard: ' + error.message, 'error');
             }
-            
-            initializeFilters();
-            initializeCharts();
-            updateMetrics();
-            updatePatientTable();
-            startRealTimeUpdates();
-            
-            // Animaciones de entrada
-            setTimeout(() => addAnimationClasses(), 100);
         });
 
-        // Configurar event listeners ARREGLADOS
+        // Configurar event listeners COMPLETAMENTE ARREGLADOS
         function initializeEventListeners() {
             console.log('🔧 Setting up event listeners...');
             
-            // Botones principales
-            document.getElementById('applyBtn').addEventListener('click', applyFilters);
-            document.getElementById('clearBtn').addEventListener('click', clearFilters);
-            document.getElementById('exportBtn').addEventListener('click', exportToCSV);
-            document.getElementById('patientSearch').addEventListener('input', function() {
-                currentPage = 1;
-                updatePatientTable();
-            });
+            try {
+                // Botones principales
+                const applyBtn = document.getElementById('applyBtn');
+                const clearBtn = document.getElementById('clearBtn');
+                const exportBtn = document.getElementById('exportBtn');
+                const patientSearch = document.getElementById('patientSearch');
+                
+                if (applyBtn) applyBtn.addEventListener('click', applyFilters);
+                if (clearBtn) clearBtn.addEventListener('click', clearFilters);
+                if (exportBtn) exportBtn.addEventListener('click', exportToCSV);
+                if (patientSearch) {
+                    patientSearch.addEventListener('input', function() {
+                        currentPage = 1;
+                        updatePatientTable();
+                    });
+                }
 
-            // Sidebar buttons - ARREGLADOS
-            const filtersBtn = document.getElementById('filtersBtn');
-            const chartsBtn = document.getElementById('chartsBtn');
-            
-            if (filtersBtn) {
-                filtersBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🎯 Abriendo filters sidebar...');
-                    toggleSidebar('filtersSidebar');
-                });
-            }
-            
-            if (chartsBtn) {
-                chartsBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('📊 Abriendo charts sidebar...');
-                    toggleSidebar('chartsSidebar');
-                });
-            }
+                // Sidebar buttons - COMPLETAMENTE ARREGLADOS
+                const filtersBtn = document.getElementById('filtersBtn');
+                const chartsBtn = document.getElementById('chartsBtn');
+                
+                if (filtersBtn) {
+                    filtersBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🎯 Opening filters sidebar...');
+                        toggleSidebar('filtersSidebar');
+                    });
+                }
+                
+                if (chartsBtn) {
+                    chartsBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('📊 Opening charts sidebar...');
+                        toggleSidebar('chartsSidebar');
+                    });
+                }
 
-            // Close sidebar buttons - ARREGLADOS
-            const closeFiltersBtn = document.getElementById('closeFiltersSidebar');
-            const closeChartsBtn = document.getElementById('closeChartsSidebar');
-            
-            if (closeFiltersBtn) {
-                closeFiltersBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    closeSidebar('filtersSidebar');
-                });
-            }
-            
-            if (closeChartsBtn) {
-                closeChartsBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    closeSidebar('chartsSidebar');
-                });
-            }
+                // Close sidebar buttons
+                const closeFiltersBtn = document.getElementById('closeFiltersSidebar');
+                const closeChartsBtn = document.getElementById('closeChartsSidebar');
+                
+                if (closeFiltersBtn) {
+                    closeFiltersBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        closeSidebar('filtersSidebar');
+                    });
+                }
+                
+                if (closeChartsBtn) {
+                    closeChartsBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        closeSidebar('chartsSidebar');
+                    });
+                }
 
-            // Overlay click - ARREGLADO
-            const overlay = document.getElementById('overlay');
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    closeSidebar('filtersSidebar');
-                    closeSidebar('chartsSidebar');
-                });
-            }
+                // Overlay click
+                const overlay = document.getElementById('overlay');
+                if (overlay) {
+                    overlay.addEventListener('click', function() {
+                        closeSidebar('filtersSidebar');
+                        closeSidebar('chartsSidebar');
+                    });
+                }
 
-            // Theme toggle
-            const themeToggle = document.getElementById('themeToggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('click', toggleTheme);
-            }
+                // Theme toggle
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', toggleTheme);
+                }
 
-            // Chart type buttons - ARREGLADOS
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('chart-type-btn') || e.target.closest('.chart-type-btn')) {
-                    const btn = e.target.classList.contains('chart-type-btn') ? e.target : e.target.closest('.chart-type-btn');
-                    const chart = btn.dataset.chart;
-                    const type = btn.dataset.type;
-                    
-                    if (chart && type) {
-                        // Update active state
-                        btn.parentElement.querySelectorAll('.chart-type-btn').forEach(function(b) {
-                            b.classList.remove('active');
-                        });
-                        btn.classList.add('active');
+                // Chart type buttons y visibility toggles con event delegation
+                document.addEventListener('click', function(e) {
+                    // Chart type buttons
+                    const chartBtn = e.target.closest('.chart-type-btn');
+                    if (chartBtn) {
+                        const chart = chartBtn.dataset.chart;
+                        const type = chartBtn.dataset.type;
                         
-                        // Update chart type
-                        chartTypes[chart] = type;
-                        updateSpecificChart(chart);
+                        if (chart && type) {
+                            // Update active state
+                            chartBtn.parentElement.querySelectorAll('.chart-type-btn').forEach(function(b) {
+                                b.classList.remove('active');
+                            });
+                            chartBtn.classList.add('active');
+                            
+                            // Update chart type
+                            chartTypes[chart] = type;
+                            updateSpecificChart(chart);
+                        }
+                        return;
                     }
-                }
-            });
 
-            // Visibility toggles - ARREGLADOS
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('toggle-switch') || e.target.closest('.toggle-switch')) {
-                    const toggle = e.target.classList.contains('toggle-switch') ? e.target : e.target.closest('.toggle-switch');
-                    toggle.classList.toggle('active');
-                    const target = toggle.dataset.target;
-                    if (target) {
-                        toggleElementVisibility(target);
+                    // Visibility toggles
+                    const toggle = e.target.closest('.toggle-switch');
+                    if (toggle) {
+                        toggle.classList.toggle('active');
+                        const target = toggle.dataset.target;
+                        if (target) {
+                            toggleElementVisibility(target);
+                        }
+                        return;
                     }
-                }
-            });
+                });
 
-            console.log('✅ Event listeners configurados exitosamente');
+                console.log('✅ Event listeners configurados exitosamente');
+            } catch (error) {
+                console.error('❌ Error setting up event listeners:', error);
+            }
         }
 
-        // Inicializar sidebars - ARREGLADO
+        // Inicializar sidebars
         function initializeSidebars() {
             console.log('🎛️ Inicializando sidebars...');
-            initializeMultiSelects();
+            try {
+                initializeMultiSelects();
+                console.log('✅ Sidebars initialized');
+            } catch (error) {
+                console.error('❌ Error initializing sidebars:', error);
+            }
         }
 
-        // Inicializar multi-selects - ARREGLADO
+        // Inicializar multi-selects
         function initializeMultiSelects() {
             console.log('🔧 Configurando multi-selects...');
             setupMultiSelect('offices', offices);
@@ -1748,84 +1762,88 @@
 
         // Configurar multi-select - COMPLETAMENTE ARREGLADO
         function setupMultiSelect(type, options) {
-            console.log(`🎯 Configurando multi-select para: ${type}`);
+            console.log('🎯 Configurando multi-select para:', type);
             
-            const trigger = document.getElementById(type + 'Trigger');
-            const dropdown = document.getElementById(type + 'Dropdown');
-            const text = document.getElementById(type + 'Text');
+            try {
+                const trigger = document.getElementById(type + 'Trigger');
+                const dropdown = document.getElementById(type + 'Dropdown');
+                const text = document.getElementById(type + 'Text');
 
-            if (!trigger || !dropdown || !text) {
-                console.warn('❌ Multi-select elements not found for:', type);
-                return;
-            }
-
-            // Poblar opciones
-            dropdown.innerHTML = '';
-            options.forEach(option => {
-                const div = document.createElement('div');
-                div.className = 'multi-select-option';
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = type + '-' + option.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
-                checkbox.value = option;
-                
-                const label = document.createElement('label');
-                label.htmlFor = checkbox.id;
-                label.textContent = option;
-                label.style.cursor = 'pointer';
-                label.style.flex = '1';
-                
-                div.appendChild(checkbox);
-                div.appendChild(label);
-                
-                // Event listener para el checkbox
-                checkbox.addEventListener('change', function() {
-                    console.log(`✅ Checkbox changed for ${type}: ${option} = ${this.checked}`);
-                    updateMultiSelectSelection(type);
-                });
-                
-                // Event listener para toda la opción
-                div.addEventListener('click', function(e) {
-                    if (e.target !== checkbox) {
-                        checkbox.checked = !checkbox.checked;
-                        checkbox.dispatchEvent(new Event('change'));
-                    }
-                });
-                
-                dropdown.appendChild(div);
-            });
-
-            // Event listeners para el trigger
-            trigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                console.log(`🎯 Multi-select trigger clicked: ${type}`);
-                
-                const isOpen = dropdown.classList.contains('show');
-                
-                // Cerrar otros dropdowns
-                document.querySelectorAll('.multi-select-dropdown').forEach(function(dd) {
-                    if (dd !== dropdown) {
-                        dd.classList.remove('show');
-                    }
-                });
-                document.querySelectorAll('.multi-select-trigger').forEach(function(tr) {
-                    if (tr !== trigger) {
-                        tr.classList.remove('active');
-                    }
-                });
-                
-                // Toggle este dropdown
-                if (isOpen) {
-                    dropdown.classList.remove('show');
-                    trigger.classList.remove('active');
-                } else {
-                    dropdown.classList.add('show');
-                    trigger.classList.add('active');
+                if (!trigger || !dropdown || !text) {
+                    console.warn('❌ Multi-select elements not found for:', type);
+                    return;
                 }
-            });
 
-            console.log(`✅ Multi-select configurado para: ${type}`);
+                // Poblar opciones
+                dropdown.innerHTML = '';
+                options.forEach(option => {
+                    const div = document.createElement('div');
+                    div.className = 'multi-select-option';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = type + '-' + option.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+                    checkbox.value = option;
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = checkbox.id;
+                    label.textContent = option;
+                    label.style.cursor = 'pointer';
+                    label.style.flex = '1';
+                    
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    
+                    // Event listener para el checkbox
+                    checkbox.addEventListener('change', function() {
+                        console.log('✅ Checkbox changed for', type + ':', option, '=', this.checked);
+                        updateMultiSelectSelection(type);
+                    });
+                    
+                    // Event listener para toda la opción
+                    div.addEventListener('click', function(e) {
+                        if (e.target !== checkbox) {
+                            checkbox.checked = !checkbox.checked;
+                            checkbox.dispatchEvent(new Event('change'));
+                        }
+                    });
+                    
+                    dropdown.appendChild(div);
+                });
+
+                // Event listener para el trigger
+                trigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    console.log('🎯 Multi-select trigger clicked:', type);
+                    
+                    const isOpen = dropdown.classList.contains('show');
+                    
+                    // Cerrar otros dropdowns
+                    document.querySelectorAll('.multi-select-dropdown').forEach(function(dd) {
+                        if (dd !== dropdown) {
+                            dd.classList.remove('show');
+                        }
+                    });
+                    document.querySelectorAll('.multi-select-trigger').forEach(function(tr) {
+                        if (tr !== trigger) {
+                            tr.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle este dropdown
+                    if (isOpen) {
+                        dropdown.classList.remove('show');
+                        trigger.classList.remove('active');
+                    } else {
+                        dropdown.classList.add('show');
+                        trigger.classList.add('active');
+                    }
+                });
+
+                console.log('✅ Multi-select configurado para:', type);
+            } catch (error) {
+                console.error('❌ Error setting up multi-select for', type + ':', error);
+            }
         }
 
         // Cerrar multi-selects al hacer click fuera
@@ -1840,48 +1858,52 @@
             }
         });
 
-        // Actualizar selección multi-select - ARREGLADO
+        // Actualizar selección multi-select
         function updateMultiSelectSelection(type) {
-            console.log(`🔄 Actualizando selección para: ${type}`);
+            console.log('🔄 Actualizando selección para:', type);
             
-            const dropdown = document.getElementById(type + 'Dropdown');
-            const text = document.getElementById(type + 'Text');
-            
-            if (!dropdown || !text) {
-                console.warn('❌ Elements not found for updateMultiSelectSelection:', type);
-                return;
-            }
-            
-            const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
-            
-            const selected = [];
-            checkboxes.forEach(function(cb) {
-                if (cb.checked) {
-                    selected.push(cb.value);
-                    cb.closest('.multi-select-option').classList.add('selected');
-                } else {
-                    cb.closest('.multi-select-option').classList.remove('selected');
+            try {
+                const dropdown = document.getElementById(type + 'Dropdown');
+                const text = document.getElementById(type + 'Text');
+                
+                if (!dropdown || !text) {
+                    console.warn('❌ Elements not found for updateMultiSelectSelection:', type);
+                    return;
                 }
-            });
+                
+                const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+                
+                const selected = [];
+                checkboxes.forEach(function(cb) {
+                    if (cb.checked) {
+                        selected.push(cb.value);
+                        cb.closest('.multi-select-option').classList.add('selected');
+                    } else {
+                        cb.closest('.multi-select-option').classList.remove('selected');
+                    }
+                });
 
-            selectedFilters[type] = selected;
-            console.log(`📊 Selected ${type}:`, selected);
+                selectedFilters[type] = selected;
+                console.log('📊 Selected', type + ':', selected);
 
-            // Actualizar texto
-            if (selected.length === 0) {
-                text.textContent = 'All ' + type.charAt(0).toUpperCase() + type.slice(1);
-            } else if (selected.length === 1) {
-                const countSpan = document.createElement('span');
-                countSpan.className = 'selected-count';
-                countSpan.textContent = '1';
-                text.innerHTML = selected[0] + ' ';
-                text.appendChild(countSpan);
-            } else {
-                const countSpan = document.createElement('span');
-                countSpan.className = 'selected-count';
-                countSpan.textContent = selected.length.toString();
-                text.innerHTML = 'Multiple Selected ';
-                text.appendChild(countSpan);
+                // Actualizar texto
+                if (selected.length === 0) {
+                    text.textContent = 'All ' + type.charAt(0).toUpperCase() + type.slice(1);
+                } else if (selected.length === 1) {
+                    const countSpan = document.createElement('span');
+                    countSpan.className = 'selected-count';
+                    countSpan.textContent = '1';
+                    text.innerHTML = selected[0] + ' ';
+                    text.appendChild(countSpan);
+                } else {
+                    const countSpan = document.createElement('span');
+                    countSpan.className = 'selected-count';
+                    countSpan.textContent = selected.length.toString();
+                    text.innerHTML = 'Multiple Selected ';
+                    text.appendChild(countSpan);
+                }
+            } catch (error) {
+                console.error('❌ Error updating multi-select selection:', error);
             }
         }
 
@@ -1889,106 +1911,126 @@
         function toggleSidebar(sidebarId) {
             console.log('🎯 Toggle sidebar:', sidebarId);
             
-            const sidebar = document.getElementById(sidebarId);
-            const overlay = document.getElementById('overlay');
-            
-            if (!sidebar) {
-                console.error('❌ Sidebar not found:', sidebarId);
-                return;
-            }
-            
-            if (!overlay) {
-                console.error('❌ Overlay not found');
-                return;
-            }
-            
-            const isOpen = sidebar.classList.contains('open');
-            
-            // Cerrar todas las sidebars primero
-            document.querySelectorAll('.sidebar').forEach(function(sb) {
-                sb.classList.remove('open');
-            });
-            
-            if (!isOpen) {
-                // Abrir la sidebar solicitada
-                sidebar.classList.add('open');
-                overlay.classList.add('show');
-                console.log('✅ Sidebar abierta:', sidebarId);
-            } else {
-                // Si ya estaba abierta, solo cerrar
-                overlay.classList.remove('show');
-                console.log('✅ Sidebar cerrada:', sidebarId);
+            try {
+                const sidebar = document.getElementById(sidebarId);
+                const overlay = document.getElementById('overlay');
+                
+                if (!sidebar) {
+                    console.error('❌ Sidebar not found:', sidebarId);
+                    return;
+                }
+                
+                if (!overlay) {
+                    console.error('❌ Overlay not found');
+                    return;
+                }
+                
+                const isOpen = sidebar.classList.contains('open');
+                
+                // Cerrar todas las sidebars primero
+                document.querySelectorAll('.sidebar').forEach(function(sb) {
+                    sb.classList.remove('open');
+                });
+                
+                if (!isOpen) {
+                    // Abrir la sidebar solicitada
+                    sidebar.classList.add('open');
+                    overlay.classList.add('show');
+                    console.log('✅ Sidebar abierta:', sidebarId);
+                } else {
+                    // Si ya estaba abierta, solo cerrar
+                    overlay.classList.remove('show');
+                    console.log('✅ Sidebar cerrada:', sidebarId);
+                }
+            } catch (error) {
+                console.error('❌ Error toggling sidebar:', error);
             }
         }
 
-        // Cerrar sidebar ARREGLADO
+        // Cerrar sidebar
         function closeSidebar(sidebarId) {
             console.log('🔒 Cerrando sidebar:', sidebarId);
             
-            const sidebar = document.getElementById(sidebarId);
-            const overlay = document.getElementById('overlay');
-            
-            if (sidebar) {
-                sidebar.classList.remove('open');
+            try {
+                const sidebar = document.getElementById(sidebarId);
+                const overlay = document.getElementById('overlay');
+                
+                if (sidebar) {
+                    sidebar.classList.remove('open');
+                }
+                
+                // Solo cerrar overlay si no hay sidebars abiertas
+                const openSidebars = document.querySelectorAll('.sidebar.open');
+                if (openSidebars.length === 0 && overlay) {
+                    overlay.classList.remove('show');
+                }
+                
+                console.log('✅ Sidebar cerrada:', sidebarId);
+            } catch (error) {
+                console.error('❌ Error closing sidebar:', error);
             }
-            
-            // Solo cerrar overlay si no hay sidebars abiertas
-            const openSidebars = document.querySelectorAll('.sidebar.open');
-            if (openSidebars.length === 0 && overlay) {
-                overlay.classList.remove('show');
-            }
-            
-            console.log('✅ Sidebar cerrada:', sidebarId);
         }
 
         // Toggle element visibility
         function toggleElementVisibility(targetId) {
             console.log('👁️ Toggling visibility:', targetId);
-            const element = document.getElementById(targetId);
-            if (element) {
-                element.classList.toggle('hidden');
-                console.log('✅ Visibility toggled for:', targetId);
-            } else {
-                console.warn('❌ Element not found for visibility toggle:', targetId);
+            try {
+                const element = document.getElementById(targetId);
+                if (element) {
+                    element.classList.toggle('hidden');
+                    console.log('✅ Visibility toggled for:', targetId);
+                } else {
+                    console.warn('❌ Element not found for visibility toggle:', targetId);
+                }
+            } catch (error) {
+                console.error('❌ Error toggling visibility:', error);
             }
         }
 
-        // Toggle theme ARREGLADO
+        // Toggle theme
         function toggleTheme() {
             console.log('🌗 Theme toggle clicked');
-            const body = document.body;
-            const themeToggle = document.getElementById('themeToggle');
-            
-            if (!themeToggle) {
-                console.error('❌ Theme toggle button not found');
-                return;
-            }
-            
-            const icon = themeToggle.querySelector('i');
-            
-            body.classList.toggle('dark-theme');
-            
-            if (body.classList.contains('dark-theme')) {
-                if (icon) icon.className = 'fas fa-sun';
-                themeToggle.setAttribute('data-tooltip', 'Toggle Light Mode');
-                showNotification('🌙 Dark mode activated!', 'info');
-            } else {
-                if (icon) icon.className = 'fas fa-moon';
-                themeToggle.setAttribute('data-tooltip', 'Toggle Dark Mode');
-                showNotification('☀️ Light mode activated!', 'info');
+            try {
+                const body = document.body;
+                const themeToggle = document.getElementById('themeToggle');
+                
+                if (!themeToggle) {
+                    console.error('❌ Theme toggle button not found');
+                    return;
+                }
+                
+                const icon = themeToggle.querySelector('i');
+                
+                body.classList.toggle('dark-theme');
+                
+                if (body.classList.contains('dark-theme')) {
+                    if (icon) icon.className = 'fas fa-sun';
+                    themeToggle.setAttribute('data-tooltip', 'Toggle Light Mode');
+                    showNotification('🌙 Dark mode activated!', 'info');
+                } else {
+                    if (icon) icon.className = 'fas fa-moon';
+                    themeToggle.setAttribute('data-tooltip', 'Toggle Dark Mode');
+                    showNotification('☀️ Light mode activated!', 'info');
+                }
+            } catch (error) {
+                console.error('❌ Error toggling theme:', error);
             }
         }
 
         // Inicializar filtros de fecha
         function initializeDateFilters() {
-            const today = new Date();
-            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-            
-            const fromDate = document.getElementById('fromDate');
-            const toDate = document.getElementById('toDate');
-            
-            if (fromDate) fromDate.value = thirtyDaysAgo.toISOString().split('T')[0];
-            if (toDate) toDate.value = today.toISOString().split('T')[0];
+            try {
+                const today = new Date();
+                const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+                
+                const fromDate = document.getElementById('fromDate');
+                const toDate = document.getElementById('toDate');
+                
+                if (fromDate) fromDate.value = thirtyDaysAgo.toISOString().split('T')[0];
+                if (toDate) toDate.value = today.toISOString().split('T')[0];
+            } catch (error) {
+                console.error('❌ Error initializing date filters:', error);
+            }
         }
 
         // Obtener datos reales
@@ -2047,7 +2089,7 @@
             }
         }
 
-        // Estados de carga mejorados
+        // Estados de carga
         function showLoadingState() {
             const loadingIndicator = document.getElementById('loadingIndicator');
             if (loadingIndicator) {
@@ -2071,7 +2113,6 @@
         function generateDemoData() {
             rawData = [];
 
-            // Generar datos realistas
             const firstNames = ["John", "Sarah", "Michael", "Emily", "David", "Lisa", "Robert", "Amanda", "James", "Jessica", "Chris", "Maria", "Daniel", "Laura", "Kevin"];
             const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Anderson", "Taylor", "Thomas", "Hernandez", "Moore"];
 
@@ -2095,129 +2136,143 @@
             console.log('📊 Demo data generated:', rawData.length, 'records');
         }
 
-        // Inicializar filtros básicos
+        // Inicializar filtros
         function initializeFilters() {
             console.log('🎛️ Filters initialized');
         }
 
-        // Aplicar filtros ARREGLADO
+        // Aplicar filtros
         async function applyFilters() {
             console.log('🎯 Aplicando filtros...');
             
-            const fromDate = document.getElementById('fromDate')?.value;
-            const toDate = document.getElementById('toDate')?.value;
+            try {
+                const fromDate = document.getElementById('fromDate')?.value;
+                const toDate = document.getElementById('toDate')?.value;
 
-            // Usar API real si está disponible
-            if (API_CONFIG.WEB_APP_URL.includes('script.google.com')) {
-                const filters = { fromDate, toDate };
-                const success = await fetchRealData(filters);
-                if (success) {
-                    updateMetrics();
-                    updateCharts();
-                    updatePatientTable();
-                    showNotification('🔍 Filters applied! ' + filteredData.length + ' records found');
-                    return;
+                // Usar API real si está disponible
+                if (API_CONFIG.WEB_APP_URL.includes('script.google.com')) {
+                    const filters = { fromDate, toDate };
+                    const success = await fetchRealData(filters);
+                    if (success) {
+                        updateMetrics();
+                        updateCharts();
+                        updatePatientTable();
+                        showNotification('🔍 Filters applied! ' + filteredData.length + ' records found');
+                        return;
+                    }
                 }
+
+                // Filtrado local como fallback
+                filteredData = rawData.filter(item => {
+                    const itemDate = new Date(item.timestamp).toISOString().split('T')[0];
+                    
+                    let passesFilters = true;
+
+                    // Filtros de fecha
+                    if (fromDate && itemDate < fromDate) passesFilters = false;
+                    if (toDate && itemDate > toDate) passesFilters = false;
+
+                    // Filtros multi-select
+                    if (selectedFilters.offices.length > 0 && !selectedFilters.offices.includes(item.office)) passesFilters = false;
+                    if (selectedFilters.carriers.length > 0 && !selectedFilters.carriers.includes(item.carrier)) passesFilters = false;
+                    if (selectedFilters.statuses.length > 0 && !selectedFilters.statuses.includes(item.claimStatus)) passesFilters = false;
+
+                    return passesFilters;
+                });
+
+                currentPage = 1;
+                updateMetrics();
+                updateCharts();
+                updatePatientTable();
+                showNotification('🔍 Filters applied! ' + filteredData.length + ' records found');
+            } catch (error) {
+                console.error('❌ Error applying filters:', error);
+                showNotification('Error applying filters: ' + error.message, 'error');
             }
-
-            // Filtrado local como fallback
-            filteredData = rawData.filter(item => {
-                const itemDate = new Date(item.timestamp).toISOString().split('T')[0];
-                
-                let passesFilters = true;
-
-                // Filtros de fecha
-                if (fromDate && itemDate < fromDate) passesFilters = false;
-                if (toDate && itemDate > toDate) passesFilters = false;
-
-                // Filtros multi-select
-                if (selectedFilters.offices.length > 0 && !selectedFilters.offices.includes(item.office)) passesFilters = false;
-                if (selectedFilters.carriers.length > 0 && !selectedFilters.carriers.includes(item.carrier)) passesFilters = false;
-                if (selectedFilters.statuses.length > 0 && !selectedFilters.statuses.includes(item.claimStatus)) passesFilters = false;
-
-                return passesFilters;
-            });
-
-            currentPage = 1;
-            updateMetrics();
-            updateCharts();
-            updatePatientTable();
-            showNotification('🔍 Filters applied! ' + filteredData.length + ' records found');
         }
 
-        // Limpiar filtros ARREGLADO
+        // Limpiar filtros
         async function clearFilters() {
             console.log('🧹 Clearing filters...');
             
-            const fromDate = document.getElementById('fromDate');
-            const toDate = document.getElementById('toDate');
-            const patientSearch = document.getElementById('patientSearch');
-            
-            if (fromDate) fromDate.value = '';
-            if (toDate) toDate.value = '';
-            if (patientSearch) patientSearch.value = '';
+            try {
+                const fromDate = document.getElementById('fromDate');
+                const toDate = document.getElementById('toDate');
+                const patientSearch = document.getElementById('patientSearch');
+                
+                if (fromDate) fromDate.value = '';
+                if (toDate) toDate.value = '';
+                if (patientSearch) patientSearch.value = '';
 
-            // Limpiar multi-selects
-            selectedFilters = { offices: [], carriers: [], statuses: [] };
-            
-            // Desmarcar checkboxes
-            document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(function(cb) {
-                cb.checked = false;
-                const option = cb.closest('.multi-select-option');
-                if (option) {
-                    option.classList.remove('selected');
+                // Limpiar multi-selects
+                selectedFilters = { offices: [], carriers: [], statuses: [] };
+                
+                // Desmarcar checkboxes
+                document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(function(cb) {
+                    cb.checked = false;
+                    const option = cb.closest('.multi-select-option');
+                    if (option) {
+                        option.classList.remove('selected');
+                    }
+                });
+
+                // Actualizar textos
+                const officesText = document.getElementById('officesText');
+                const carriersText = document.getElementById('carriersText');
+                const statusText = document.getElementById('statusText');
+                
+                if (officesText) officesText.textContent = 'All Offices';
+                if (carriersText) carriersText.textContent = 'All Carriers';
+                if (statusText) statusText.textContent = 'All Statuses';
+
+                // Recargar datos
+                const success = await fetchRealData();
+                if (!success) {
+                    filteredData = rawData;
                 }
-            });
 
-            // Actualizar textos
-            const officesText = document.getElementById('officesText');
-            const carriersText = document.getElementById('carriersText');
-            const statusText = document.getElementById('statusText');
-            
-            if (officesText) officesText.textContent = 'All Offices';
-            if (carriersText) carriersText.textContent = 'All Carriers';
-            if (statusText) statusText.textContent = 'All Statuses';
-
-            // Recargar datos
-            const success = await fetchRealData();
-            if (!success) {
-                filteredData = rawData;
+                currentPage = 1;
+                updateMetrics();
+                updateCharts();
+                updatePatientTable();
+                showNotification('🧹 All filters cleared!');
+            } catch (error) {
+                console.error('❌ Error clearing filters:', error);
+                showNotification('Error clearing filters: ' + error.message, 'error');
             }
-
-            currentPage = 1;
-            updateMetrics();
-            updateCharts();
-            updatePatientTable();
-            showNotification('🧹 All filters cleared!');
         }
 
         // Actualizar métricas
         function updateMetrics() {
-            const totalRevenue = filteredData.reduce((sum, item) => sum + (parseFloat(item.paidAmount) || 0), 0);
-            const totalClaims = filteredData.length;
-            const avgClaim = totalClaims > 0 ? totalRevenue / totalClaims : 0;
-            const activeOffices = [...new Set(filteredData.map(d => d.office).filter(Boolean))].length;
+            try {
+                const totalRevenue = filteredData.reduce((sum, item) => sum + (parseFloat(item.paidAmount) || 0), 0);
+                const totalClaims = filteredData.length;
+                const avgClaim = totalClaims > 0 ? totalRevenue / totalClaims : 0;
+                const activeOffices = [...new Set(filteredData.map(d => d.office).filter(Boolean))].length;
 
-            // Calcular stats temporales
-            const today = new Date().toISOString().split('T')[0];
-            const thisWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            const thisMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                // Calcular stats temporales
+                const today = new Date().toISOString().split('T')[0];
+                const thisWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                const thisMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-            const todayClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] === today).length;
-            const weekClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] >= thisWeek).length;
-            const monthClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] >= thisMonth).length;
+                const todayClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] === today).length;
+                const weekClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] >= thisWeek).length;
+                const monthClaims = filteredData.filter(item => item.timestamp && item.timestamp.split('T')[0] >= thisMonth).length;
 
-            // Actualizar UI con animaciones
-            animateValue('totalRevenue', totalRevenue, ');
-            animateValue('totalClaims', totalClaims);
-            animateValue('avgClaim', avgClaim, ');
-            animateValue('activeOffices', activeOffices);
-            animateValue('todayClaims', todayClaims);
-            animateValue('weekClaims', weekClaims);
-            animateValue('monthClaims', monthClaims);
+                // Actualizar UI con animaciones
+                animateValue('totalRevenue', totalRevenue, ');
+                animateValue('totalClaims', totalClaims);
+                animateValue('avgClaim', avgClaim, ');
+                animateValue('activeOffices', activeOffices);
+                animateValue('todayClaims', todayClaims);
+                animateValue('weekClaims', weekClaims);
+                animateValue('monthClaims', monthClaims);
 
-            // Crear mini sparklines para trends
-            createMiniSparklines();
+                // Crear mini sparklines para trends
+                createMiniSparklines();
+            } catch (error) {
+                console.error('❌ Error updating metrics:', error);
+            }
         }
 
         // Animar valores numéricos
@@ -2300,546 +2355,601 @@
                 console.warn('⚠️ Chart.js not available, skipping charts');
                 return;
             }
-            console.log('📊 Initializing ultimate charts...');
-            createRevenueChart();
-            createOfficeChart();
-            createCarrierChart();
-            createStatusChart();
+            console.log('📊 Initializing charts...');
+            try {
+                createRevenueChart();
+                createOfficeChart();
+                createCarrierChart();
+                createStatusChart();
+            } catch (error) {
+                console.error('❌ Error initializing charts:', error);
+            }
         }
 
         // Actualizar gráfico específico
         function updateSpecificChart(chartName) {
-            switch(chartName) {
-                case 'revenue':
-                    createRevenueChart();
-                    break;
-                case 'office':
-                    createOfficeChart();
-                    break;
-                case 'carrier':
-                    createCarrierChart();
-                    break;
-                case 'status':
-                    createStatusChart();
-                    break;
+            try {
+                switch(chartName) {
+                    case 'revenue':
+                        createRevenueChart();
+                        break;
+                    case 'office':
+                        createOfficeChart();
+                        break;
+                    case 'carrier':
+                        createCarrierChart();
+                        break;
+                    case 'status':
+                        createStatusChart();
+                        break;
+                }
+            } catch (error) {
+                console.error('❌ Error updating chart:', error);
             }
         }
 
-        // Gráfico de revenue mejorado
+        // Gráfico de revenue
         function createRevenueChart() {
             if (typeof Chart === 'undefined') return;
 
             const ctx = document.getElementById('revenueChart');
             if (!ctx) return;
-            const context = ctx.getContext('2d');
             
-            const monthlyData = {};
-            filteredData.forEach(item => {
-                if (item.timestamp && item.paidAmount) {
-                    const month = new Date(item.timestamp).toISOString().substring(0, 7);
-                    if (!monthlyData[month]) monthlyData[month] = 0;
-                    monthlyData[month] += parseFloat(item.paidAmount) || 0;
-                }
-            });
+            try {
+                const context = ctx.getContext('2d');
+                
+                const monthlyData = {};
+                filteredData.forEach(item => {
+                    if (item.timestamp && item.paidAmount) {
+                        const month = new Date(item.timestamp).toISOString().substring(0, 7);
+                        if (!monthlyData[month]) monthlyData[month] = 0;
+                        monthlyData[month] += parseFloat(item.paidAmount) || 0;
+                    }
+                });
 
-            const labels = Object.keys(monthlyData).sort();
-            const data = labels.map(month => monthlyData[month]);
+                const labels = Object.keys(monthlyData).sort();
+                const data = labels.map(month => monthlyData[month]);
 
-            if (charts.revenue) charts.revenue.destroy();
+                if (charts.revenue) charts.revenue.destroy();
 
-            const chartConfig = {
-                data: {
-                    labels: labels.map(month => {
-                        try {
-                            return new Date(month + '-01').toLocaleDateString('en', { month: 'short', year: 'numeric' });
-                        } catch (e) {
-                            return month;
-                        }
-                    }),
-                    datasets: [{
-                        label: 'Monthly Revenue',
-                        data: data,
-                        borderColor: '#0066CC',
-                        backgroundColor: chartTypes.revenue === 'area' ? 'rgba(0, 102, 204, 0.3)' : 'rgba(0, 102, 204, 0.1)',
-                        borderWidth: 3,
-                        fill: chartTypes.revenue === 'area' || chartTypes.revenue === 'line',
-                        tension: 0.4,
-                        pointBackgroundColor: '#0066CC',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8,
-                        pointHoverBackgroundColor: '#FF6B35'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: 'white',
-                            bodyColor: 'white',
-                            cornerRadius: 10,
-                            displayColors: false
-                        }
+                const chartConfig = {
+                    data: {
+                        labels: labels.map(month => {
+                            try {
+                                return new Date(month + '-01').toLocaleDateString('en', { month: 'short', year: 'numeric' });
+                            } catch (e) {
+                                return month;
+                            }
+                        }),
+                        datasets: [{
+                            label: 'Monthly Revenue',
+                            data: data,
+                            borderColor: '#0066CC',
+                            backgroundColor: chartTypes.revenue === 'area' ? 'rgba(0, 102, 204, 0.3)' : 'rgba(0, 102, 204, 0.1)',
+                            borderWidth: 3,
+                            fill: chartTypes.revenue === 'area' || chartTypes.revenue === 'line',
+                            tension: 0.4,
+                            pointBackgroundColor: '#0066CC',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            pointHoverBackgroundColor: '#FF6B35'
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return ' + value.toLocaleString();
-                                },
-                                color: '#718096'
-                            },
-                            grid: {
-                                color: 'rgba(226, 232, 240, 0.5)'
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 10,
+                                displayColors: false
                             }
                         },
-                        x: {
-                            ticks: { color: '#718096' },
-                            grid: { display: false }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    onClick: (event, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const month = labels[index];
-                            filterByMonth(month);
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return ' + value.toLocaleString();
+                                    },
+                                    color: '#718096'
+                                },
+                                grid: {
+                                    color: 'rgba(226, 232, 240, 0.5)'
+                                }
+                            },
+                            x: {
+                                ticks: { color: '#718096' },
+                                grid: { display: false }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const month = labels[index];
+                                filterByMonth(month);
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            charts.revenue = new Chart(context, {
-                type: chartTypes.revenue === 'area' ? 'line' : chartTypes.revenue,
-                ...chartConfig
-            });
+                charts.revenue = new Chart(context, {
+                    type: chartTypes.revenue === 'area' ? 'line' : chartTypes.revenue,
+                    ...chartConfig
+                });
+            } catch (error) {
+                console.error('❌ Error creating revenue chart:', error);
+            }
         }
 
-        // Gráfico de oficinas mejorado
+        // Gráfico de oficinas
         function createOfficeChart() {
             if (typeof Chart === 'undefined') return;
 
             const ctx = document.getElementById('officeChart');
             if (!ctx) return;
-            const context = ctx.getContext('2d');
             
-            const officeData = {};
-            filteredData.forEach(item => {
-                if (item.office && item.paidAmount) {
-                    if (!officeData[item.office]) officeData[item.office] = 0;
-                    officeData[item.office] += parseFloat(item.paidAmount) || 0;
-                }
-            });
+            try {
+                const context = ctx.getContext('2d');
+                
+                const officeData = {};
+                filteredData.forEach(item => {
+                    if (item.office && item.paidAmount) {
+                        if (!officeData[item.office]) officeData[item.office] = 0;
+                        officeData[item.office] += parseFloat(item.paidAmount) || 0;
+                    }
+                });
 
-            if (charts.office) charts.office.destroy();
+                if (charts.office) charts.office.destroy();
 
-            const colors = ['#0066CC', '#00A86B', '#FF6B35', '#FFB800', '#9C27B0', '#E53E3E', '#3182CE'];
+                const colors = ['#0066CC', '#00A86B', '#FF6B35', '#FFB800', '#9C27B0', '#E53E3E', '#3182CE'];
 
-            const chartConfig = {
-                data: {
-                    labels: Object.keys(officeData),
-                    datasets: [{
-                        data: Object.values(officeData),
-                        backgroundColor: colors,
-                        borderWidth: 0,
-                        hoverOffset: 15,
-                        hoverBorderWidth: 3,
-                        hoverBorderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { 
-                                padding: 20, 
-                                usePointStyle: true,
-                                color: '#718096'
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: 'white',
-                            bodyColor: 'white',
-                            cornerRadius: 10,
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label + ':  + context.parsed.toLocaleString();
+                charts.office = new Chart(context, {
+                    type: chartTypes.office,
+                    data: {
+                        labels: Object.keys(officeData),
+                        datasets: [{
+                            data: Object.values(officeData),
+                            backgroundColor: colors,
+                            borderWidth: 0,
+                            hoverOffset: 15,
+                            hoverBorderWidth: 3,
+                            hoverBorderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { 
+                                    padding: 20, 
+                                    usePointStyle: true,
+                                    color: '#718096'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 10,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.label + ':  + context.parsed.toLocaleString();
+                                    }
                                 }
                             }
-                        }
-                    },
-                    onClick: (event, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const office = Object.keys(officeData)[index];
-                            filterByOffice(office);
+                        },
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const office = Object.keys(officeData)[index];
+                                filterByOffice(office);
+                            }
                         }
                     }
-                }
-            };
-
-            charts.office = new Chart(context, {
-                type: chartTypes.office,
-                ...chartConfig
-            });
+                });
+            } catch (error) {
+                console.error('❌ Error creating office chart:', error);
+            }
         }
 
-        // Gráfico de carriers mejorado
+        // Gráfico de carriers
         function createCarrierChart() {
             if (typeof Chart === 'undefined') return;
 
             const ctx = document.getElementById('carrierChart');
             if (!ctx) return;
-            const context = ctx.getContext('2d');
             
-            const carrierData = {};
-            filteredData.forEach(item => {
-                if (item.carrier) {
-                    if (!carrierData[item.carrier]) carrierData[item.carrier] = 0;
-                    carrierData[item.carrier]++;
-                }
-            });
+            try {
+                const context = ctx.getContext('2d');
+                
+                const carrierData = {};
+                filteredData.forEach(item => {
+                    if (item.carrier) {
+                        if (!carrierData[item.carrier]) carrierData[item.carrier] = 0;
+                        carrierData[item.carrier]++;
+                    }
+                });
 
-            const sortedCarriers = Object.entries(carrierData)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 10);
+                const sortedCarriers = Object.entries(carrierData)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 10);
 
-            if (charts.carrier) charts.carrier.destroy();
+                if (charts.carrier) charts.carrier.destroy();
 
-            charts.carrier = new Chart(context, {
-                type: 'bar',
-                data: {
-                    labels: sortedCarriers.map(([name]) => name.length > 15 ? name.substring(0, 15) + '...' : name),
-                    datasets: [{
-                        label: 'Claims Count',
-                        data: sortedCarriers.map(([,count]) => count),
-                        backgroundColor: '#00A86B',
-                        borderRadius: 10,
-                        borderSkipped: false,
-                        hoverBackgroundColor: '#FF6B35',
-                        hoverBorderRadius: 15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: 'white',
-                            bodyColor: 'white',
-                            cornerRadius: 10
-                        }
+                charts.carrier = new Chart(context, {
+                    type: 'bar',
+                    data: {
+                        labels: sortedCarriers.map(([name]) => name.length > 15 ? name.substring(0, 15) + '...' : name),
+                        datasets: [{
+                            label: 'Claims Count',
+                            data: sortedCarriers.map(([,count]) => count),
+                            backgroundColor: '#00A86B',
+                            borderRadius: 10,
+                            borderSkipped: false,
+                            hoverBackgroundColor: '#FF6B35',
+                            hoverBorderRadius: 15
+                        }]
                     },
-                    scales: { 
-                        y: { 
-                            beginAtZero: true,
-                            ticks: { color: '#718096' },
-                            grid: { color: 'rgba(226, 232, 240, 0.5)' }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 10
+                            }
                         },
-                        x: {
-                            ticks: { color: '#718096' },
-                            grid: { display: false }
-                        }
-                    },
-                    onClick: (event, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const carrier = sortedCarriers[index][0];
-                            filterByCarrier(carrier);
+                        scales: { 
+                            y: { 
+                                beginAtZero: true,
+                                ticks: { color: '#718096' },
+                                grid: { color: 'rgba(226, 232, 240, 0.5)' }
+                            },
+                            x: {
+                                ticks: { color: '#718096' },
+                                grid: { display: false }
+                            }
+                        },
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const carrier = sortedCarriers[index][0];
+                                filterByCarrier(carrier);
+                            }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('❌ Error creating carrier chart:', error);
+            }
         }
 
-        // Gráfico de estados mejorado
+        // Gráfico de estados
         function createStatusChart() {
             if (typeof Chart === 'undefined') return;
 
             const ctx = document.getElementById('statusChart');
             if (!ctx) return;
-            const context = ctx.getContext('2d');
             
-            const statusData = {};
-            filteredData.forEach(item => {
-                if (item.claimStatus) {
-                    if (!statusData[item.claimStatus]) statusData[item.claimStatus] = 0;
-                    statusData[item.claimStatus]++;
-                }
-            });
+            try {
+                const context = ctx.getContext('2d');
+                
+                const statusData = {};
+                filteredData.forEach(item => {
+                    if (item.claimStatus) {
+                        if (!statusData[item.claimStatus]) statusData[item.claimStatus] = 0;
+                        statusData[item.claimStatus]++;
+                    }
+                });
 
-            if (charts.status) charts.status.destroy();
+                if (charts.status) charts.status.destroy();
 
-            const colors = ['#0066CC80', '#00A86B80', '#FF6B3580', '#FFB80080'];
+                const colors = ['#0066CC80', '#00A86B80', '#FF6B3580', '#FFB80080'];
 
-            charts.status = new Chart(context, {
-                type: 'polarArea',
-                data: {
-                    labels: Object.keys(statusData),
-                    datasets: [{
-                        data: Object.values(statusData),
-                        backgroundColor: colors,
-                        borderWidth: 2,
-                        borderColor: '#fff',
-                        hoverBorderWidth: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { 
-                                padding: 20, 
-                                usePointStyle: true,
-                                color: '#718096'
+                charts.status = new Chart(context, {
+                    type: 'polarArea',
+                    data: {
+                        labels: Object.keys(statusData),
+                        datasets: [{
+                            data: Object.values(statusData),
+                            backgroundColor: colors,
+                            borderWidth: 2,
+                            borderColor: '#fff',
+                            hoverBorderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { 
+                                    padding: 20, 
+                                    usePointStyle: true,
+                                    color: '#718096'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                cornerRadius: 10
                             }
                         },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: 'white',
-                            bodyColor: 'white',
-                            cornerRadius: 10
-                        }
-                    },
-                    onClick: (event, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const status = Object.keys(statusData)[index];
-                            filterByStatus(status);
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const status = Object.keys(statusData)[index];
+                                filterByStatus(status);
+                            }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('❌ Error creating status chart:', error);
+            }
         }
 
         // Actualizar todos los gráficos
         function updateCharts() {
             if (typeof Chart === 'undefined') return;
-            initializeCharts();
+            try {
+                initializeCharts();
+            } catch (error) {
+                console.error('❌ Error updating charts:', error);
+            }
         }
 
         // Funciones de filtrado por click en gráficos
         function filterByMonth(month) {
-            const firstDay = month + '-01';
-            const lastDay = new Date(new Date(firstDay).getFullYear(), new Date(firstDay).getMonth() + 1, 0).toISOString().split('T')[0];
-            
-            const fromDate = document.getElementById('fromDate');
-            const toDate = document.getElementById('toDate');
-            
-            if (fromDate) fromDate.value = firstDay;
-            if (toDate) toDate.value = lastDay;
-            
-            applyFilters();
-            showNotification('📅 Filtered by month: ' + month);
+            try {
+                const firstDay = month + '-01';
+                const lastDay = new Date(new Date(firstDay).getFullYear(), new Date(firstDay).getMonth() + 1, 0).toISOString().split('T')[0];
+                
+                const fromDate = document.getElementById('fromDate');
+                const toDate = document.getElementById('toDate');
+                
+                if (fromDate) fromDate.value = firstDay;
+                if (toDate) toDate.value = lastDay;
+                
+                applyFilters();
+                showNotification('📅 Filtered by month: ' + month);
+            } catch (error) {
+                console.error('❌ Error filtering by month:', error);
+            }
         }
 
         function filterByOffice(office) {
-            // Clear current selections
-            selectedFilters.offices = [office];
-            
-            // Update checkbox
-            document.querySelectorAll('#officesDropdown input[type="checkbox"]').forEach(cb => {
-                cb.checked = cb.value === office;
-            });
-            
-            updateMultiSelectSelection('offices');
-            applyFilters();
-            showNotification('🏢 Filtered by office: ' + office);
+            try {
+                selectedFilters.offices = [office];
+                
+                document.querySelectorAll('#officesDropdown input[type="checkbox"]').forEach(cb => {
+                    cb.checked = cb.value === office;
+                });
+                
+                updateMultiSelectSelection('offices');
+                applyFilters();
+                showNotification('🏢 Filtered by office: ' + office);
+            } catch (error) {
+                console.error('❌ Error filtering by office:', error);
+            }
         }
 
         function filterByCarrier(carrier) {
-            selectedFilters.carriers = [carrier];
-            
-            document.querySelectorAll('#carriersDropdown input[type="checkbox"]').forEach(cb => {
-                cb.checked = cb.value === carrier;
-            });
-            
-            updateMultiSelectSelection('carriers');
-            applyFilters();
-            showNotification('🏥 Filtered by carrier: ' + carrier);
+            try {
+                selectedFilters.carriers = [carrier];
+                
+                document.querySelectorAll('#carriersDropdown input[type="checkbox"]').forEach(cb => {
+                    cb.checked = cb.value === carrier;
+                });
+                
+                updateMultiSelectSelection('carriers');
+                applyFilters();
+                showNotification('🏥 Filtered by carrier: ' + carrier);
+            } catch (error) {
+                console.error('❌ Error filtering by carrier:', error);
+            }
         }
 
         function filterByStatus(status) {
-            selectedFilters.statuses = [status];
-            
-            document.querySelectorAll('#statusDropdown input[type="checkbox"]').forEach(cb => {
-                cb.checked = cb.value === status;
-            });
-            
-            updateMultiSelectSelection('statuses');
-            applyFilters();
-            showNotification('📋 Filtered by status: ' + status);
-        }
-
-        // Actualizar tabla de pacientes mejorada
-        function updatePatientTable() {
-            const searchTerm = document.getElementById('patientSearch')?.value.toLowerCase() || '';
-            let displayData = filteredData;
-
-            if (searchTerm) {
-                displayData = filteredData.filter(item =>
-                    (item.patient && item.patient.toLowerCase().includes(searchTerm)) ||
-                    (item.office && item.office.toLowerCase().includes(searchTerm)) ||
-                    (item.carrier && item.carrier.toLowerCase().includes(searchTerm))
-                );
-            }
-
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageData = displayData.slice(startIndex, endIndex);
-
-            const tbody = document.getElementById('patientsTableBody');
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
-
-            pageData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.style.animationDelay = (index * 0.1) + 's';
-                row.className = 'animate-fade-in';
+            try {
+                selectedFilters.statuses = [status];
                 
-                row.innerHTML = `
-                    <td><strong>${item.patient || 'N/A'}</strong></td>
-                    <td>${item.office || 'N/A'}</td>
-                    <td>${item.carrier && item.carrier.length > 20 ? item.carrier.substring(0, 20) + '...' : item.carrier || 'N/A'}</td>
-                    <td><strong>${(parseFloat(item.paidAmount) || 0).toFixed(2)}</strong></td>
-                    <td><span class="status-badge status-${(item.claimStatus || 'none').toLowerCase()}">
-                    <i class="fas fa-circle"></i> ${item.claimStatus || 'N/A'}</span></td>
-                    <td>${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            updatePagination(displayData.length);
+                document.querySelectorAll('#statusDropdown input[type="checkbox"]').forEach(cb => {
+                    cb.checked = cb.value === status;
+                });
+                
+                updateMultiSelectSelection('statuses');
+                applyFilters();
+                showNotification('📋 Filtered by status: ' + status);
+            } catch (error) {
+                console.error('❌ Error filtering by status:', error);
+            }
         }
 
-        // Paginación mejorada
+        // Actualizar tabla de pacientes
+        function updatePatientTable() {
+            try {
+                const searchTerm = document.getElementById('patientSearch')?.value.toLowerCase() || '';
+                let displayData = filteredData;
+
+                if (searchTerm) {
+                    displayData = filteredData.filter(item =>
+                        (item.patient && item.patient.toLowerCase().includes(searchTerm)) ||
+                        (item.office && item.office.toLowerCase().includes(searchTerm)) ||
+                        (item.carrier && item.carrier.toLowerCase().includes(searchTerm))
+                    );
+                }
+
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pageData = displayData.slice(startIndex, endIndex);
+
+                const tbody = document.getElementById('patientsTableBody');
+                if (!tbody) return;
+                
+                tbody.innerHTML = '';
+
+                pageData.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.style.animationDelay = (index * 0.1) + 's';
+                    row.className = 'animate-fade-in';
+                    
+                    row.innerHTML = `
+                        <td><strong>${item.patient || 'N/A'}</strong></td>
+                        <td>${item.office || 'N/A'}</td>
+                        <td>${item.carrier && item.carrier.length > 20 ? item.carrier.substring(0, 20) + '...' : item.carrier || 'N/A'}</td>
+                        <td><strong>${(parseFloat(item.paidAmount) || 0).toFixed(2)}</strong></td>
+                        <td><span class="status-badge status-${(item.claimStatus || 'none').toLowerCase()}">
+                        <i class="fas fa-circle"></i> ${item.claimStatus || 'N/A'}</span></td>
+                        <td>${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                updatePagination(displayData.length);
+            } catch (error) {
+                console.error('❌ Error updating patient table:', error);
+            }
+        }
+
+        // Paginación
         function updatePagination(totalItems) {
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            const pagination = document.getElementById('pagination');
-            if (!pagination) return;
-            
-            pagination.innerHTML = '';
+            try {
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                const pagination = document.getElementById('pagination');
+                if (!pagination) return;
+                
+                pagination.innerHTML = '';
 
-            if (totalPages <= 1) return;
+                if (totalPages <= 1) return;
 
-            // Botón anterior
-            const prevBtn = document.createElement('button');
-            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> Previous';
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.onclick = function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updatePatientTable();
-                }
-            };
-            pagination.appendChild(prevBtn);
-
-            // Números de página con elipsis
-            const startPage = Math.max(1, currentPage - 2);
-            const endPage = Math.min(totalPages, currentPage + 2);
-
-            if (startPage > 1) {
-                const firstBtn = document.createElement('button');
-                firstBtn.textContent = '1';
-                firstBtn.onclick = function() {
-                    currentPage = 1;
-                    updatePatientTable();
+                // Botón anterior
+                const prevBtn = document.createElement('button');
+                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> Previous';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.onclick = function() {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        updatePatientTable();
+                    }
                 };
-                pagination.appendChild(firstBtn);
+                pagination.appendChild(prevBtn);
 
-                if (startPage > 2) {
-                    const ellipsis = document.createElement('span');
-                    ellipsis.textContent = '...';
-                    ellipsis.style.padding = '10px';
-                    ellipsis.style.color = '#718096';
-                    pagination.appendChild(ellipsis);
+                // Números de página
+                const startPage = Math.max(1, currentPage - 2);
+                const endPage = Math.min(totalPages, currentPage + 2);
+
+                if (startPage > 1) {
+                    const firstBtn = document.createElement('button');
+                    firstBtn.textContent = '1';
+                    firstBtn.onclick = function() {
+                        currentPage = 1;
+                        updatePatientTable();
+                    };
+                    pagination.appendChild(firstBtn);
+
+                    if (startPage > 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.style.padding = '10px';
+                        ellipsis.style.color = '#718096';
+                        pagination.appendChild(ellipsis);
+                    }
                 }
-            }
 
-            for (let i = startPage; i <= endPage; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.textContent = i;
-                pageBtn.className = i === currentPage ? 'active' : '';
-                pageBtn.onclick = function() {
-                    currentPage = i;
-                    updatePatientTable();
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    pageBtn.className = i === currentPage ? 'active' : '';
+                    pageBtn.onclick = function() {
+                        currentPage = i;
+                        updatePatientTable();
+                    };
+                    pagination.appendChild(pageBtn);
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.style.padding = '10px';
+                        ellipsis.style.color = '#718096';
+                        pagination.appendChild(ellipsis);
+                    }
+
+                    const lastBtn = document.createElement('button');
+                    lastBtn.textContent = totalPages;
+                    lastBtn.onclick = function() {
+                        currentPage = totalPages;
+                        updatePatientTable();
+                    };
+                    pagination.appendChild(lastBtn);
+                }
+
+                // Botón siguiente
+                const nextBtn = document.createElement('button');
+                nextBtn.innerHTML = 'Next <i class="fas fa-chevron-right"></i>';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.onclick = function() {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        updatePatientTable();
+                    }
                 };
-                pagination.appendChild(pageBtn);
+                pagination.appendChild(nextBtn);
+            } catch (error) {
+                console.error('❌ Error updating pagination:', error);
             }
-
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    const ellipsis = document.createElement('span');
-                    ellipsis.textContent = '...';
-                    ellipsis.style.padding = '10px';
-                    ellipsis.style.color = '#718096';
-                    pagination.appendChild(ellipsis);
-                }
-
-                const lastBtn = document.createElement('button');
-                lastBtn.textContent = totalPages;
-                lastBtn.onclick = function() {
-                    currentPage = totalPages;
-                    updatePatientTable();
-                };
-                pagination.appendChild(lastBtn);
-            }
-
-            // Botón siguiente
-            const nextBtn = document.createElement('button');
-            nextBtn.innerHTML = 'Next <i class="fas fa-chevron-right"></i>';
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.onclick = function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updatePatientTable();
-                }
-            };
-            pagination.appendChild(nextBtn);
         }
 
-        // Export CSV mejorado
+        // Export CSV
         function exportToCSV() {
-            const headers = ['Patient', 'Office', 'Carrier', 'Paid Amount', 'Status', 'Date', 'DOB', 'DOS'];
-            const csvContent = [
-                headers.join(','),
-                ...filteredData.map(item => [
-                    '"' + (item.patient || '') + '"',
-                    '"' + (item.office || '') + '"',
-                    '"' + (item.carrier || '') + '"',
-                    (parseFloat(item.paidAmount) || 0),
-                    '"' + (item.claimStatus || '') + '"',
-                    (item.timestamp ? new Date(item.timestamp).toLocaleDateString() : ''),
-                    '"' + (item.dob || '') + '"',
-                    '"' + (item.dos || '') + '"'
-                ].join(','))
-            ].join('\n');
+            try {
+                const headers = ['Patient', 'Office', 'Carrier', 'Paid Amount', 'Status', 'Date', 'DOB', 'DOS'];
+                const csvContent = [
+                    headers.join(','),
+                    ...filteredData.map(item => [
+                        '"' + (item.patient || '') + '"',
+                        '"' + (item.office || '') + '"',
+                        '"' + (item.carrier || '') + '"',
+                        (parseFloat(item.paidAmount) || 0),
+                        '"' + (item.claimStatus || '') + '"',
+                        (item.timestamp ? new Date(item.timestamp).toLocaleDateString() : ''),
+                        '"' + (item.dob || '') + '"',
+                        '"' + (item.dos || '') + '"'
+                    ].join(','))
+                ].join('\n');
 
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'dental_analytics_titan_' + new Date().toISOString().split('T')[0] + '.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-            
-            showNotification('📥 CSV exported successfully! ' + filteredData.length + ' records');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'dental_analytics_titan_' + new Date().toISOString().split('T')[0] + '.csv';
+                a.click();
+                window.URL.revokeObjectURL(url);
+                
+                showNotification('📥 CSV exported successfully! ' + filteredData.length + ' records');
+            } catch (error) {
+                console.error('❌ Error exporting CSV:', error);
+                showNotification('Error exporting CSV: ' + error.message, 'error');
+            }
         }
 
         // Actualizaciones en tiempo real
@@ -2857,142 +2967,134 @@
             }, API_CONFIG.POLLING_INTERVAL);
         }
 
-        // Sistema de notificaciones mejorado
+        // Sistema de notificaciones
         function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            const colors = {
-                success: 'linear-gradient(135deg, #00A86B, #00D084)',
-                error: 'linear-gradient(135deg, #E53E3E, #FC8181)',
-                warning: 'linear-gradient(135deg, #FFB800, #F6E05E)',
-                info: 'linear-gradient(135deg, #0066CC, #4A90E2)'
-            };
-            
-            notification.style.cssText = `
-                position: fixed; 
-                top: 80px; 
-                right: 20px; 
-                background: ${colors[type] || colors.success}; 
-                color: white; 
-                padding: 15px 25px; 
-                border-radius: 15px; 
-                font-weight: 600; 
-                z-index: 1001; 
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-                max-width: 350px;
-                animation: slideInRight 0.5s ease-out;
-                backdrop-filter: blur(10px);
-            `;
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            document.body.appendChild(notification);
-            
-            setTimeout(function() {
-                notification.style.animation = 'slideOutRight 0.5s ease-in forwards';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 500);
-            }, 4000);
+            try {
+                const notification = document.createElement('div');
+                const colors = {
+                    success: 'linear-gradient(135deg, #00A86B, #00D084)',
+                    error: 'linear-gradient(135deg, #E53E3E, #FC8181)',
+                    warning: 'linear-gradient(135deg, #FFB800, #F6E05E)',
+                    info: 'linear-gradient(135deg, #0066CC, #4A90E2)'
+                };
+                
+                notification.style.cssText = `
+                    position: fixed; 
+                    top: 80px; 
+                    right: 20px; 
+                    background: ${colors[type] || colors.success}; 
+                    color: white; 
+                    padding: 15px 25px; 
+                    border-radius: 15px; 
+                    font-weight: 600; 
+                    z-index: 1001; 
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                    max-width: 350px;
+                    animation: slideInRight 0.5s ease-out;
+                    backdrop-filter: blur(10px);
+                `;
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(function() {
+                    notification.style.animation = 'slideOutRight 0.5s ease-in forwards';
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 500);
+                }, 4000);
+            } catch (error) {
+                console.error('❌ Error showing notification:', error);
+            }
         }
 
         // Actualizar indicador de estado
         function updateStatusIndicator(message) {
-            const indicator = document.getElementById('statusIndicator');
-            if (indicator) {
-                indicator.textContent = message;
-                indicator.style.animation = 'pulse 1s ease-in-out';
+            try {
+                const indicator = document.getElementById('statusIndicator');
+                if (indicator) {
+                    indicator.textContent = message;
+                    indicator.style.animation = 'pulse 1s ease-in-out';
+                }
+            } catch (error) {
+                console.error('❌ Error updating status indicator:', error);
             }
         }
 
         // Agregar clases de animación
         function addAnimationClasses() {
-            const elements = document.querySelectorAll('.metric-card, .chart-card, .data-card');
-            elements.forEach((el, index) => {
-                setTimeout(() => {
-                    el.classList.add('animate-slide-bottom');
-                }, index * 100);
-            });
+            try {
+                const elements = document.querySelectorAll('.metric-card, .chart-card, .data-card');
+                elements.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.classList.add('animate-slide-bottom');
+                    }, index * 100);
+                });
+            } catch (error) {
+                console.error('❌ Error adding animation classes:', error);
+            }
         }
 
-        // Easter eggs y efectos especiales
+        // Easter egg - Header click
         document.addEventListener('DOMContentLoaded', function() {
             const headerTitle = document.querySelector('.header h1');
             if (headerTitle) {
                 headerTitle.addEventListener('click', function() {
-                    this.style.animation = 'none';
-                    setTimeout(() => {
-                        this.style.animation = 'pulse 1s ease-in-out 3';
-                    }, 10);
-                    
-                    // Confetti effect
-                    createConfetti();
-                    showNotification('🎉 THE ULTIMATE TITAN created with ❤️ and lots of ☕!', 'info');
+                    try {
+                        this.style.animation = 'none';
+                        setTimeout(() => {
+                            this.style.animation = 'pulse 1s ease-in-out 3';
+                        }, 10);
+                        
+                        createConfetti();
+                        showNotification('🎉 THE ULTIMATE TITAN created with ❤️ and lots of ☕!', 'info');
+                    } catch (error) {
+                        console.error('❌ Error in easter egg:', error);
+                    }
                 });
             }
         });
 
         // Efecto confetti
         function createConfetti() {
-            const colors = ['#FF6B35', '#0066CC', '#00A86B', '#FFB800', '#9C27B0'];
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.cssText = `
-                    position: fixed;
-                    width: 10px;
-                    height: 10px;
-                    background: ${colors[Math.floor(Math.random() * colors.length)]};
-                    top: -10px;
-                    left: ${Math.random() * 100}vw;
-                    z-index: 10000;
-                    pointer-events: none;
-                    border-radius: 50%;
-                    animation: confettiFall ${Math.random() * 2 + 2}s linear forwards;
-                `;
-                document.body.appendChild(confetti);
-                
-                setTimeout(() => {
-                    if (document.body.contains(confetti)) {
-                        document.body.removeChild(confetti);
-                    }
-                }, 4000);
+            try {
+                const colors = ['#FF6B35', '#0066CC', '#00A86B', '#FFB800', '#9C27B0'];
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.style.cssText = `
+                        position: fixed;
+                        width: 10px;
+                        height: 10px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        top: -10px;
+                        left: ${Math.random() * 100}vw;
+                        z-index: 10000;
+                        pointer-events: none;
+                        border-radius: 50%;
+                        animation: confettiFall ${Math.random() * 2 + 2}s linear forwards;
+                    `;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        if (document.body.contains(confetti)) {
+                            document.body.removeChild(confetti);
+                        }
+                    }, 4000);
+                }
+            } catch (error) {
+                console.error('❌ Error creating confetti:', error);
             }
         }
 
-        // CSS para animación de confetti
-        const confettiStyle = document.createElement('style');
-        confettiStyle.textContent = `
-            @keyframes confettiFall {
-                to {
-                    transform: translateY(100vh) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-            
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-            
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
-            }
-        `;
-        document.head.appendChild(confettiStyle);
-
         console.log('🚀 THE ULTIMATE TITAN IS ALIVE AND READY TO CONQUER!');
         console.log('💎 Enhanced with ultimate features and galactic powers!');
-        console.log('🔥 All bugs exterminated - BESTIA MODE ACTIVATED!');
+        console.log('🔥 All bugs exterminated - TITAN MODE ACTIVATED!');
     </script>
 </body>
 </html>
