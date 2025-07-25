@@ -1659,17 +1659,29 @@
             const dropdown = document.getElementById(type + 'Dropdown');
             const text = document.getElementById(type + 'Text');
 
+            if (!trigger || !dropdown || !text) {
+                console.warn('Multi-select elements not found for:', type);
+                return;
+            }
+
             // Poblar opciones
             dropdown.innerHTML = '';
             options.forEach(option => {
                 const div = document.createElement('div');
                 div.className = 'multi-select-option';
-                div.innerHTML = `
-                    <input type="checkbox" id="${type}-${option}" value="${option}">
-                    <label for="${type}-${option}">${option}</label>
-                `;
                 
-                const checkbox = div.querySelector('input');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = type + '-' + option.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+                checkbox.value = option;
+                
+                const label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+                label.textContent = option;
+                
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                
                 checkbox.addEventListener('change', function() {
                     updateMultiSelectSelection(type);
                 });
@@ -1684,12 +1696,12 @@
                 trigger.classList.toggle('active');
                 
                 // Cerrar otros dropdowns
-                document.querySelectorAll('.multi-select-dropdown').forEach(dd => {
+                document.querySelectorAll('.multi-select-dropdown').forEach(function(dd) {
                     if (dd !== dropdown) {
                         dd.classList.remove('show');
                     }
                 });
-                document.querySelectorAll('.multi-select-trigger').forEach(tr => {
+                document.querySelectorAll('.multi-select-trigger').forEach(function(tr) {
                     if (tr !== trigger) {
                         tr.classList.remove('active');
                     }
@@ -1709,10 +1721,13 @@
         function updateMultiSelectSelection(type) {
             const dropdown = document.getElementById(type + 'Dropdown');
             const text = document.getElementById(type + 'Text');
+            
+            if (!dropdown || !text) return;
+            
             const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
             
             const selected = [];
-            checkboxes.forEach(cb => {
+            checkboxes.forEach(function(cb) {
                 if (cb.checked) {
                     selected.push(cb.value);
                     cb.closest('.multi-select-option').classList.add('selected');
@@ -1725,30 +1740,48 @@
 
             // Actualizar texto
             if (selected.length === 0) {
-                text.textContent = `All ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                text.textContent = 'All ' + type.charAt(0).toUpperCase() + type.slice(1);
             } else if (selected.length === 1) {
-                text.innerHTML = `${selected[0]} <span class="selected-count">1</span>`;
+                const countSpan = document.createElement('span');
+                countSpan.className = 'selected-count';
+                countSpan.textContent = '1';
+                text.innerHTML = selected[0] + ' ';
+                text.appendChild(countSpan);
             } else {
-                text.innerHTML = `Multiple Selected <span class="selected-count">${selected.length}</span>`;
+                const countSpan = document.createElement('span');
+                countSpan.className = 'selected-count';
+                countSpan.textContent = selected.length.toString();
+                text.innerHTML = 'Multiple Selected ';
+                text.appendChild(countSpan);
             }
         }
 
         // Toggle sidebar
         function toggleSidebar() {
+            console.log('Toggle sidebar clicked');
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('show');
+                console.log('Sidebar toggled, open:', sidebar.classList.contains('open'));
+            } else {
+                console.error('Sidebar elements not found');
+            }
         }
 
         // Cerrar sidebar
         function closeSidebar() {
+            console.log('Close sidebar clicked');
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
+            if (sidebar && overlay) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+                console.log('Sidebar closed');
+            }
         }
 
         // Toggle element visibility
@@ -1771,18 +1804,27 @@
 
         // Toggle theme
         function toggleTheme() {
+            console.log('Theme toggle clicked');
             const body = document.body;
             const themeToggle = document.getElementById('themeToggle');
+            
+            if (!themeToggle) {
+                console.error('Theme toggle button not found');
+                return;
+            }
+            
             const icon = themeToggle.querySelector('i');
             
             body.classList.toggle('dark-theme');
             
             if (body.classList.contains('dark-theme')) {
-                icon.className = 'fas fa-sun';
+                if (icon) icon.className = 'fas fa-sun';
                 themeToggle.setAttribute('data-tooltip', 'Toggle Light Mode');
+                showNotification('🌙 Dark mode activated!', 'info');
             } else {
-                icon.className = 'fas fa-moon';
+                if (icon) icon.className = 'fas fa-moon';
                 themeToggle.setAttribute('data-tooltip', 'Toggle Dark Mode');
+                showNotification('☀️ Light mode activated!', 'info');
             }
         }
 
