@@ -993,7 +993,7 @@
                 <div class="filter-actions">
                     <!-- DROPDOWN FILTERS -->
                     <div class="filter-dropdown">
-                        <button class="filter-btn" onclick="toggleDropdown('officeDropdown', this)" id="officeBtn">
+                        <button class="filter-btn" id="officeBtn">
                             <span><i class="fas fa-building"></i> Offices</span>
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
                         </button>
@@ -1002,20 +1002,20 @@
                                 <i class="fas fa-building"></i> Select Offices
                             </div>
                             <div class="dropdown-search">
-                                <input type="text" placeholder="Search offices..." oninput="searchDropdown('office', this.value)">
+                                <input type="text" placeholder="Search offices..." id="officeSearch">
                             </div>
                             <div id="officeOptions">
                                 <!-- Options populated by JavaScript -->
                             </div>
                             <div class="dropdown-actions">
-                                <button class="dropdown-btn btn-select-all" onclick="selectAllInDropdown('office')">Select All</button>
-                                <button class="dropdown-btn btn-clear-all" onclick="clearAllInDropdown('office')">Clear All</button>
+                                <button class="dropdown-btn btn-select-all" id="selectAllOffices">Select All</button>
+                                <button class="dropdown-btn btn-clear-all" id="clearAllOffices">Clear All</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="filter-dropdown">
-                        <button class="filter-btn" onclick="toggleDropdown('carrierDropdown', this)" id="carrierBtn">
+                        <button class="filter-btn" id="carrierBtn">
                             <span><i class="fas fa-shield-alt"></i> Carriers</span>
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
                         </button>
@@ -1024,20 +1024,20 @@
                                 <i class="fas fa-shield-alt"></i> Select Carriers
                             </div>
                             <div class="dropdown-search">
-                                <input type="text" placeholder="Search carriers..." oninput="searchDropdown('carrier', this.value)">
+                                <input type="text" placeholder="Search carriers..." id="carrierSearch">
                             </div>
                             <div id="carrierOptions">
                                 <!-- Options populated by JavaScript -->
                             </div>
                             <div class="dropdown-actions">
-                                <button class="dropdown-btn btn-select-all" onclick="selectAllInDropdown('carrier')">Select All</button>
-                                <button class="dropdown-btn btn-clear-all" onclick="clearAllInDropdown('carrier')">Clear All</button>
+                                <button class="dropdown-btn btn-select-all" id="selectAllCarriers">Select All</button>
+                                <button class="dropdown-btn btn-clear-all" id="clearAllCarriers">Clear All</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="filter-dropdown">
-                        <button class="filter-btn" onclick="toggleDropdown('statusDropdown', this)" id="statusBtn">
+                        <button class="filter-btn" id="statusBtn">
                             <span><i class="fas fa-tasks"></i> Status</span>
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
                         </button>
@@ -1046,14 +1046,14 @@
                                 <i class="fas fa-tasks"></i> Select Status
                             </div>
                             <div class="dropdown-search">
-                                <input type="text" placeholder="Search status..." oninput="searchDropdown('status', this.value)">
+                                <input type="text" placeholder="Search status..." id="statusSearch">
                             </div>
                             <div id="statusOptions">
                                 <!-- Options populated by JavaScript -->
                             </div>
                             <div class="dropdown-actions">
-                                <button class="dropdown-btn btn-select-all" onclick="selectAllInDropdown('status')">Select All</button>
-                                <button class="dropdown-btn btn-clear-all" onclick="clearAllInDropdown('status')">Clear All</button>
+                                <button class="dropdown-btn btn-select-all" id="selectAllStatus">Select All</button>
+                                <button class="dropdown-btn btn-clear-all" id="clearAllStatus">Clear All</button>
                             </div>
                         </div>
                     </div>
@@ -1369,7 +1369,7 @@
             options.forEach(option => {
                 const checkbox = option.querySelector('.filter-checkbox');
                 option.classList.remove('selected');
-                checkbox.checked = false;
+                if (checkbox) checkbox.checked = false;
             });
             
             updateActiveFiltersDisplay();
@@ -1397,11 +1397,10 @@
             
             if (count === 0) {
                 span.innerHTML = `<i class="${icons[filterType]}"></i> ${labels[filterType]}`;
-                button.classList.remove('active');
+                button.style.background = '';
             } else {
                 span.innerHTML = `<i class="${icons[filterType]}"></i> ${labels[filterType]} (${count})`;
                 if (!button.classList.contains('active')) {
-                    // Solo cambiar color si no está desplegado
                     button.style.background = 'linear-gradient(135deg, var(--secondary), var(--secondary-light))';
                 }
             }
@@ -1435,7 +1434,7 @@
                 
                 if (toDate) {
                     filtersHTML += `
-                        <div class="active-filter-tag">
+                        <div class="active-filter-tag">  
                             <i class="fas fa-calendar"></i>
                             To: ${toDate}
                             <button class="remove-filter" onclick="removeFilter('toDate')">×</button>
@@ -1490,13 +1489,15 @@
                 
                 // Actualizar checkboxes
                 const optionsContainer = document.getElementById(filterType + 'Options');
-                const options = optionsContainer.querySelectorAll('.filter-option');
-                
-                options.forEach(option => {
-                    const checkbox = option.querySelector('.filter-checkbox');
-                    option.classList.remove('selected');
-                    checkbox.checked = false;
-                });
+                if (optionsContainer) {
+                    const options = optionsContainer.querySelectorAll('.filter-option');
+                    
+                    options.forEach(option => {
+                        const checkbox = option.querySelector('.filter-checkbox');
+                        option.classList.remove('selected');
+                        if (checkbox) checkbox.checked = false;
+                    });
+                }
             }
             
             updateActiveFiltersDisplay();
@@ -1523,13 +1524,13 @@
                     options.forEach(option => {
                         const checkbox = option.querySelector('.filter-checkbox');
                         option.classList.remove('selected');
-                        checkbox.checked = false;
+                        if (checkbox) checkbox.checked = false;
                     });
                 }
             });
             
             // Resetear datos
-            filteredData = rawData;
+            filteredData = [...rawData];
             updateMetrics();
             updateCharts();
             updatePatientTable();
@@ -1582,6 +1583,7 @@
             updateMetrics();
             updateCharts();
             updatePatientTable();
+            updateActiveFiltersDisplay();
             closeAllDropdowns();
             
             showNotification(`🔍 Filters applied! Found ${filteredData.length} of ${rawData.length} records`, 'success');
@@ -1625,6 +1627,67 @@
             });
             
             console.log('✅ Dropdown options populated');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            console.log('🔧 Setting up event listeners...');
+            
+            // Botones dropdown
+            document.getElementById('officeBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown('officeDropdown', this);
+            });
+            
+            document.getElementById('carrierBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown('carrierDropdown', this);
+            });
+            
+            document.getElementById('statusBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown('statusDropdown', this);
+            });
+            
+            // Búsqueda en dropdowns
+            document.getElementById('officeSearch').addEventListener('input', function() {
+                searchDropdown('office', this.value);
+            });
+            
+            document.getElementById('carrierSearch').addEventListener('input', function() {
+                searchDropdown('carrier', this.value);
+            });
+            
+            document.getElementById('statusSearch').addEventListener('input', function() {
+                searchDropdown('status', this.value);
+            });
+            
+            // Botones select/clear all
+            document.getElementById('selectAllOffices').addEventListener('click', function() {
+                selectAllInDropdown('office');
+            });
+            
+            document.getElementById('clearAllOffices').addEventListener('click', function() {
+                clearAllInDropdown('office');
+            });
+            
+            document.getElementById('selectAllCarriers').addEventListener('click', function() {
+                selectAllInDropdown('carrier');
+            });
+            
+            document.getElementById('clearAllCarriers').addEventListener('click', function() {
+                clearAllInDropdown('carrier');
+            });
+            
+            document.getElementById('selectAllStatus').addEventListener('click', function() {
+                selectAllInDropdown('status');
+            });
+            
+            document.getElementById('clearAllStatus').addEventListener('click', function() {
+                clearAllInDropdown('status');
+            });
+            
+            console.log('✅ Event listeners setup complete');
         }
 
         // Actualizar métricas
@@ -2121,6 +2184,9 @@
                 // Generar datos demo
                 generateDemoData();
                 
+                // Setup event listeners
+                setupEventListeners();
+                
                 // Poblar dropdowns
                 populateDropdownOptions();
                 
@@ -2136,6 +2202,13 @@
             } catch (error) {
                 console.error('❌ Error initializing TITAN:', error);
                 showNotification('❌ Error initializing dashboard: ' + error.message, 'error');
+            }
+        });
+
+        // Cerrar dropdowns al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.filter-dropdown') && !e.target.closest('.overlay')) {
+                closeAllDropdowns();
             }
         });
 
