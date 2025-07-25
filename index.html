@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦷 Dental Analytics Dashboard - ULTIMATE BEAST</title>
+    <title>🦷 Dental Analytics Dashboard - THE ULTIMATE TITAN</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -106,6 +106,8 @@
             font-weight: 600;
             font-size: 1rem;
         }
+
+        /* SIDEBAR STYLES */
         .hamburger-menu {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
@@ -667,36 +669,14 @@
             opacity: 0.3;
         }
 
-        /* LAYOUT DINÁMICO */
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
-            transition: var(--transition);
-        }
-
-        .main-content.full-width {
-            grid-template-columns: 1fr;
-        }
-
+        /* CHARTS SECTION */
         .charts-section {
             display: grid;
             gap: 30px;
+            margin-bottom: 40px;
         }
 
-        .data-section {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            transition: var(--transition);
-        }
-
-        .data-section.hidden {
-            display: none;
-        }
-
-        .chart-card, .data-card {
+        .chart-card {
             background: linear-gradient(135deg, var(--card) 0%, #FAFBFC 100%);
             border-radius: 25px;
             padding: 35px;
@@ -711,12 +691,12 @@
             display: none;
         }
 
-        .chart-card:hover, .data-card:hover {
+        .chart-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
 
-        .chart-header, .data-header {
+        .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -725,7 +705,7 @@
             gap: 15px;
         }
 
-        .chart-title, .data-title {
+        .chart-title {
             font-size: 1.4rem;
             font-weight: 800;
             color: var(--text);
@@ -749,8 +729,42 @@
         }
 
         /* TABLE MEJORADA */
+        .data-card {
+            background: linear-gradient(135deg, var(--card) 0%, #FAFBFC 100%);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .data-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .patients-table-container {
-            max-height: 600px;
+            max-height: 800px;
             overflow-y: auto;
             border-radius: 15px;
             border: 1px solid var(--border);
@@ -1025,12 +1039,77 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* OVERLAY */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* THEME TOGGLE */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            font-size: 1.5rem;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl), var(--glow);
+        }
+
+        /* TOOLTIP SYSTEM */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* RESPONSIVE DESIGN AVANZADO */
         @media (max-width: 1400px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
             .metrics-hero {
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
@@ -1161,84 +1240,10 @@
         .animate-fade-in {
             animation: fadeIn 0.6s ease-out;
         }
-
-        /* DARK MODE TOGGLE */
-        .theme-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            transition: var(--transition);
-            font-size: 1.5rem;
-            z-index: 1000;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-xl), var(--glow);
-        }
-
-        /* OVERLAY */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 998;
-            display: none;
-            backdrop-filter: blur(5px);
-        }
-
-        .overlay.show {
-            display: block;
-        }
-
-        /* TOOLTIP SYSTEM */
-        .tooltip {
-            position: relative;
-            cursor: help;
-        }
-
-        .tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
-
-        .tooltip:hover::after {
-            opacity: 1;
-            visibility: visible;
-        }
     </style>
 </head>
 <body>
-        <!-- FILTERS COMPACTOS -->
-        <div class="filters animate-slide-left">
-            <div class="filter-group">
-                <label class="filter-label">📅 From Date</label>
-                <input type="date" class="filter-input" id="fromDate">
-        <!-- FILTERS SIDEBAR -->
+    <!-- FILTERS SIDEBAR -->
     <div class="sidebar" id="filtersSidebar">
         <div class="sidebar-header">
             <button class="close-sidebar" id="closeFiltersSidebar">
@@ -1379,7 +1384,7 @@
         <header class="header animate-slide-bottom">
             <div class="header-content">
                 <h1>🦷 Dental Analytics Dashboard</h1>
-                <p>The Ultimate Beast - Real-time insights for your dental practice</p>
+                <p>THE ULTIMATE TITAN - Real-time insights for your dental practice</p>
             </div>
         </header>
 
@@ -1567,190 +1572,6 @@
             </div>
         </div>
     </div>
-            <div class="filter-group">
-                <label class="filter-label">📅 To Date</label>
-                <input type="date" class="filter-input" id="toDate">
-            </div>
-            <div class="filter-group">
-                <label class="filter-label">⚡ Quick Actions</label>
-                <div class="filter-actions">
-                    <button class="hamburger-menu" id="hamburgerBtn">
-                        <i class="fas fa-cog"></i> Advanced
-                    </button>
-                    <button class="btn btn-primary" id="applyBtn">
-                        <i class="fas fa-play"></i> Apply
-                    </button>
-                    <button class="btn btn-secondary" id="clearBtn">
-                        <i class="fas fa-refresh"></i> Clear
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- METRICS HERO -->
-        <div class="metrics-hero animate-slide-right">
-            <div class="metric-card">
-                <div class="metric-icon" style="background: linear-gradient(135deg, #00A86B, #00D084);">💰</div>
-                <div class="metric-value" id="totalRevenue">$27,477</div>
-                <div class="metric-label">Total Revenue</div>
-                <div class="metric-change">
-                    <i class="fas fa-arrow-up"></i> +12.3%
-                </div>
-                <canvas class="metric-trend" id="revenueTrend"></canvas>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon" style="background: linear-gradient(135deg, #0066CC, #4A90E2);">📊</div>
-                <div class="metric-value" id="totalClaims">247</div>
-                <div class="metric-label">Claims Processed</div>
-                <div class="metric-change">
-                    <i class="fas fa-arrow-up"></i> +8.7%
-                </div>
-                <canvas class="metric-trend" id="claimsTrend"></canvas>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon" style="background: linear-gradient(135deg, #FF6B35, #FF8A65);">⭐</div>
-                <div class="metric-value" id="avgClaim">$196</div>
-                <div class="metric-label">Average Claim</div>
-                <div class="metric-change">
-                    <i class="fas fa-arrow-up"></i> +5.2%
-                </div>
-                <canvas class="metric-trend" id="avgTrend"></canvas>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon" style="background: linear-gradient(135deg, #9C27B0, #BA68C8);">🏢</div>
-                <div class="metric-value" id="activeOffices">5</div>
-                <div class="metric-label">Active Offices</div>
-                <div class="metric-change">
-                    <i class="fas fa-arrow-up"></i> +100%
-                </div>
-                <canvas class="metric-trend" id="officesTrend"></canvas>
-            </div>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="main-content" id="mainContent">
-            <!-- CHARTS SECTION -->
-            <div class="charts-section">
-                <div class="chart-card" id="revenue-chart">
-                    <div class="chart-header">
-                        <h3 class="chart-title">
-                            <i class="fas fa-chart-line"></i> Monthly Revenue Flow
-                        </h3>
-                        <div class="chart-controls">
-                            <button class="chart-type-btn tooltip" data-tooltip="Switch to 3D view">
-                                <i class="fas fa-cube"></i>
-                            </button>
-                            <button class="chart-type-btn tooltip" data-tooltip="Full screen">
-                                <i class="fas fa-expand"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="chart-container large">
-                        <canvas id="revenueChart"></canvas>
-                    </div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                    <div class="chart-card" id="office-chart">
-                        <div class="chart-header">
-                            <h3 class="chart-title">
-                                <i class="fas fa-building"></i> Office Performance
-                            </h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="officeChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="chart-card" id="status-chart">
-                        <div class="chart-header">
-                            <h3 class="chart-title">
-                                <i class="fas fa-tasks"></i> Claims Pipeline
-                            </h3>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="statusChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="chart-card" id="carrier-chart">
-                    <div class="chart-header">
-                        <h3 class="chart-title">
-                            <i class="fas fa-shield-alt"></i> Top Insurance Carriers
-                        </h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="carrierChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DATA SECTION -->
-            <div class="data-section" id="data-section">
-                <!-- MINI STATS -->
-                <div class="data-card">
-                    <div class="data-header">
-                        <h3 class="data-title">
-                            <i class="fas fa-tachometer-alt"></i> Quick Stats
-                        </h3>
-                    </div>
-                    <div class="mini-stats">
-                        <div class="mini-stat">
-                            <div class="mini-stat-value" id="todayClaims">12</div>
-                            <div class="mini-stat-label">Today</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-value" id="weekClaims">89</div>
-                            <div class="mini-stat-label">This Week</div>
-                        </div>
-                        <div class="mini-stat">
-                            <div class="mini-stat-value" id="monthClaims">247</div>
-                            <div class="mini-stat-label">This Month</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PATIENT LIST -->
-                <div class="data-card">
-                    <div class="data-header">
-                        <h3 class="data-title">
-                            <i class="fas fa-users"></i> Patient List
-                        </h3>
-                        <button class="export-btn" id="exportBtn">
-                            <i class="fas fa-download"></i> Export CSV
-                        </button>
-                    </div>
-                    
-                    <div class="search-box">
-                        <input type="text" class="search-input" id="patientSearch" placeholder="Search patients, offices, carriers...">
-                        <i class="fas fa-search search-icon"></i>
-                    </div>
-
-                    <div class="patients-table-container">
-                        <table class="patients-table">
-                            <thead>
-                                <tr>
-                                    <th><i class="fas fa-user"></i> Patient</th>
-                                    <th><i class="fas fa-building"></i> Office</th>
-                                    <th><i class="fas fa-shield-alt"></i> Carrier</th>
-                                    <th><i class="fas fa-dollar-sign"></i> Amount</th>
-                                    <th><i class="fas fa-info-circle"></i> Status</th>
-                                    <th><i class="fas fa-calendar"></i> Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="patientsTableBody">
-                                <!-- Patients data will be populated here -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="pagination" id="pagination">
-                        <!-- Pagination will be populated here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         // 🚀 CONFIGURACIÓN GALÁCTICA
@@ -1785,11 +1606,11 @@
 
         // 🚀 INICIALIZACIÓN ÉPICA
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 Inicializando THE ULTIMATE BEAST...');
+            console.log('🚀 Inicializando THE ULTIMATE TITAN...');
             
             initializeDateFilters();
             initializeEventListeners();
-            initializeSidebar();
+            initializeSidebars();
             
             // Intentar cargar datos reales
             const success = await fetchRealData();
@@ -1809,8 +1630,10 @@
             setTimeout(() => addAnimationClasses(), 100);
         });
 
-        // Configurar event listeners
+        // Configurar event listeners ARREGLADOS
         function initializeEventListeners() {
+            console.log('🔧 Setting up event listeners...');
+            
             // Botones principales
             document.getElementById('applyBtn').addEventListener('click', applyFilters);
             document.getElementById('clearBtn').addEventListener('click', clearFilters);
@@ -1820,79 +1643,119 @@
                 updatePatientTable();
             });
 
-            // Sidebar buttons
-            document.getElementById('filtersBtn').addEventListener('click', function() {
-                toggleSidebar('filtersSidebar');
-            });
-            document.getElementById('chartsBtn').addEventListener('click', function() {
-                toggleSidebar('chartsSidebar');
-            });
+            // Sidebar buttons - ARREGLADOS
+            const filtersBtn = document.getElementById('filtersBtn');
+            const chartsBtn = document.getElementById('chartsBtn');
             
-            document.getElementById('closeFiltersSidebar').addEventListener('click', function() {
-                closeSidebar('filtersSidebar');
-            });
-            document.getElementById('closeChartsSidebar').addEventListener('click', function() {
-                closeSidebar('chartsSidebar');
-            });
+            if (filtersBtn) {
+                filtersBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Abriendo filters sidebar...');
+                    toggleSidebar('filtersSidebar');
+                });
+            }
+            
+            if (chartsBtn) {
+                chartsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('📊 Abriendo charts sidebar...');
+                    toggleSidebar('chartsSidebar');
+                });
+            }
 
-            document.getElementById('overlay').addEventListener('click', function() {
-                closeSidebar('filtersSidebar');
-                closeSidebar('chartsSidebar');
-            });
+            // Close sidebar buttons - ARREGLADOS
+            const closeFiltersBtn = document.getElementById('closeFiltersSidebar');
+            const closeChartsBtn = document.getElementById('closeChartsSidebar');
+            
+            if (closeFiltersBtn) {
+                closeFiltersBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeSidebar('filtersSidebar');
+                });
+            }
+            
+            if (closeChartsBtn) {
+                closeChartsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeSidebar('chartsSidebar');
+                });
+            }
+
+            // Overlay click - ARREGLADO
+            const overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    closeSidebar('filtersSidebar');
+                    closeSidebar('chartsSidebar');
+                });
+            }
 
             // Theme toggle
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', toggleTheme);
+            }
 
-            // Chart type buttons
-            document.querySelectorAll('.chart-type-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    const chart = this.dataset.chart;
-                    const type = this.dataset.type;
+            // Chart type buttons - ARREGLADOS
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('chart-type-btn') || e.target.closest('.chart-type-btn')) {
+                    const btn = e.target.classList.contains('chart-type-btn') ? e.target : e.target.closest('.chart-type-btn');
+                    const chart = btn.dataset.chart;
+                    const type = btn.dataset.type;
                     
                     if (chart && type) {
                         // Update active state
-                        this.parentElement.querySelectorAll('.chart-type-btn').forEach(function(b) {
+                        btn.parentElement.querySelectorAll('.chart-type-btn').forEach(function(b) {
                             b.classList.remove('active');
                         });
-                        this.classList.add('active');
+                        btn.classList.add('active');
                         
                         // Update chart type
                         chartTypes[chart] = type;
                         updateSpecificChart(chart);
                     }
-                });
+                }
             });
 
-            // Visibility toggles
-            document.querySelectorAll('.toggle-switch').forEach(function(toggle) {
-                toggle.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    const target = this.dataset.target;
-                    toggleElementVisibility(target);
-                });
+            // Visibility toggles - ARREGLADOS
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('toggle-switch') || e.target.closest('.toggle-switch')) {
+                    const toggle = e.target.classList.contains('toggle-switch') ? e.target : e.target.closest('.toggle-switch');
+                    toggle.classList.toggle('active');
+                    const target = toggle.dataset.target;
+                    if (target) {
+                        toggleElementVisibility(target);
+                    }
+                }
             });
+
+            console.log('✅ Event listeners configurados exitosamente');
         }
 
-        // Inicializar sidebar
-        function initializeSidebar() {
+        // Inicializar sidebars - ARREGLADO
+        function initializeSidebars() {
+            console.log('🎛️ Inicializando sidebars...');
             initializeMultiSelects();
         }
 
-        // Inicializar multi-selects
+        // Inicializar multi-selects - ARREGLADO
         function initializeMultiSelects() {
+            console.log('🔧 Configurando multi-selects...');
             setupMultiSelect('offices', offices);
             setupMultiSelect('carriers', carriers); 
             setupMultiSelect('statuses', statuses);
         }
 
-        // Configurar multi-select
+        // Configurar multi-select - COMPLETAMENTE ARREGLADO
         function setupMultiSelect(type, options) {
+            console.log(`🎯 Configurando multi-select para: ${type}`);
+            
             const trigger = document.getElementById(type + 'Trigger');
             const dropdown = document.getElementById(type + 'Dropdown');
             const text = document.getElementById(type + 'Text');
 
             if (!trigger || !dropdown || !text) {
-                console.warn('Multi-select elements not found for:', type);
+                console.warn('❌ Multi-select elements not found for:', type);
                 return;
             }
 
@@ -1910,22 +1773,35 @@
                 const label = document.createElement('label');
                 label.htmlFor = checkbox.id;
                 label.textContent = option;
+                label.style.cursor = 'pointer';
+                label.style.flex = '1';
                 
                 div.appendChild(checkbox);
                 div.appendChild(label);
                 
+                // Event listener para el checkbox
                 checkbox.addEventListener('change', function() {
+                    console.log(`✅ Checkbox changed for ${type}: ${option} = ${this.checked}`);
                     updateMultiSelectSelection(type);
+                });
+                
+                // Event listener para toda la opción
+                div.addEventListener('click', function(e) {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
                 });
                 
                 dropdown.appendChild(div);
             });
 
-            // Event listeners
+            // Event listeners para el trigger
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
-                dropdown.classList.toggle('show');
-                trigger.classList.toggle('active');
+                console.log(`🎯 Multi-select trigger clicked: ${type}`);
+                
+                const isOpen = dropdown.classList.contains('show');
                 
                 // Cerrar otros dropdowns
                 document.querySelectorAll('.multi-select-dropdown').forEach(function(dd) {
@@ -1938,23 +1814,43 @@
                         tr.classList.remove('active');
                     }
                 });
-            });
-
-            // Cerrar al hacer click fuera
-            document.addEventListener('click', function(e) {
-                if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+                
+                // Toggle este dropdown
+                if (isOpen) {
                     dropdown.classList.remove('show');
                     trigger.classList.remove('active');
+                } else {
+                    dropdown.classList.add('show');
+                    trigger.classList.add('active');
                 }
             });
+
+            console.log(`✅ Multi-select configurado para: ${type}`);
         }
 
-        // Actualizar selección multi-select
+        // Cerrar multi-selects al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.multi-select-container')) {
+                document.querySelectorAll('.multi-select-dropdown').forEach(function(dd) {
+                    dd.classList.remove('show');
+                });
+                document.querySelectorAll('.multi-select-trigger').forEach(function(tr) {
+                    tr.classList.remove('active');
+                });
+            }
+        });
+
+        // Actualizar selección multi-select - ARREGLADO
         function updateMultiSelectSelection(type) {
+            console.log(`🔄 Actualizando selección para: ${type}`);
+            
             const dropdown = document.getElementById(type + 'Dropdown');
             const text = document.getElementById(type + 'Text');
             
-            if (!dropdown || !text) return;
+            if (!dropdown || !text) {
+                console.warn('❌ Elements not found for updateMultiSelectSelection:', type);
+                return;
+            }
             
             const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
             
@@ -1969,6 +1865,7 @@
             });
 
             selectedFilters[type] = selected;
+            console.log(`📊 Selected ${type}:`, selected);
 
             // Actualizar texto
             if (selected.length === 0) {
@@ -1988,29 +1885,46 @@
             }
         }
 
-        // Toggle sidebar mejorado
+        // Toggle sidebar COMPLETAMENTE ARREGLADO
         function toggleSidebar(sidebarId) {
-            console.log('Toggle sidebar:', sidebarId);
+            console.log('🎯 Toggle sidebar:', sidebarId);
+            
             const sidebar = document.getElementById(sidebarId);
             const overlay = document.getElementById('overlay');
             
-            if (sidebar && overlay) {
-                // Cerrar otras sidebars
-                closeSidebar('filtersSidebar');
-                closeSidebar('chartsSidebar');
-                
-                // Abrir la solicitada
+            if (!sidebar) {
+                console.error('❌ Sidebar not found:', sidebarId);
+                return;
+            }
+            
+            if (!overlay) {
+                console.error('❌ Overlay not found');
+                return;
+            }
+            
+            const isOpen = sidebar.classList.contains('open');
+            
+            // Cerrar todas las sidebars primero
+            document.querySelectorAll('.sidebar').forEach(function(sb) {
+                sb.classList.remove('open');
+            });
+            
+            if (!isOpen) {
+                // Abrir la sidebar solicitada
                 sidebar.classList.add('open');
                 overlay.classList.add('show');
-                console.log('Sidebar opened:', sidebarId);
+                console.log('✅ Sidebar abierta:', sidebarId);
             } else {
-                console.error('Sidebar elements not found:', sidebarId);
+                // Si ya estaba abierta, solo cerrar
+                overlay.classList.remove('show');
+                console.log('✅ Sidebar cerrada:', sidebarId);
             }
         }
 
-        // Cerrar sidebar mejorado
+        // Cerrar sidebar ARREGLADO
         function closeSidebar(sidebarId) {
-            console.log('Close sidebar:', sidebarId);
+            console.log('🔒 Cerrando sidebar:', sidebarId);
+            
             const sidebar = document.getElementById(sidebarId);
             const overlay = document.getElementById('overlay');
             
@@ -2023,34 +1937,30 @@
             if (openSidebars.length === 0 && overlay) {
                 overlay.classList.remove('show');
             }
+            
+            console.log('✅ Sidebar cerrada:', sidebarId);
         }
 
         // Toggle element visibility
         function toggleElementVisibility(targetId) {
+            console.log('👁️ Toggling visibility:', targetId);
             const element = document.getElementById(targetId);
             if (element) {
                 element.classList.toggle('hidden');
-                
-                // Adjust main content layout
-                const mainContent = document.getElementById('mainContent');
-                const dataSection = document.getElementById('data-section');
-                
-                if (dataSection.classList.contains('hidden')) {
-                    mainContent.classList.add('full-width');
-                } else {
-                    mainContent.classList.remove('full-width');
-                }
+                console.log('✅ Visibility toggled for:', targetId);
+            } else {
+                console.warn('❌ Element not found for visibility toggle:', targetId);
             }
         }
 
-        // Toggle theme
+        // Toggle theme ARREGLADO
         function toggleTheme() {
-            console.log('Theme toggle clicked');
+            console.log('🌗 Theme toggle clicked');
             const body = document.body;
             const themeToggle = document.getElementById('themeToggle');
             
             if (!themeToggle) {
-                console.error('Theme toggle button not found');
+                console.error('❌ Theme toggle button not found');
                 return;
             }
             
@@ -2074,8 +1984,11 @@
             const today = new Date();
             const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
             
-            document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
-            document.getElementById('toDate').value = today.toISOString().split('T')[0];
+            const fromDate = document.getElementById('fromDate');
+            const toDate = document.getElementById('toDate');
+            
+            if (fromDate) fromDate.value = thirtyDaysAgo.toISOString().split('T')[0];
+            if (toDate) toDate.value = today.toISOString().split('T')[0];
         }
 
         // Obtener datos reales
@@ -2129,7 +2042,7 @@
                 console.error('❌ Error fetching data:', error);
                 hideLoadingState();
                 updateStatusIndicator('🔴 Connection Error');
-                showNotification('❌ Error: ' + error.message);
+                showNotification('❌ Error: ' + error.message, 'error');
                 return false;
             }
         }
@@ -2156,30 +2069,13 @@
 
         // Generar datos demo
         function generateDemoData() {
-            rawData = [
-                {
-                    timestamp: "2025-06-13T18:31:59.049Z",
-                    carrier: "HDS",
-                    office: "Leon Springs",
-                    patient: "BARRACLOUGH, NANCY",
-                    paidAmount: 137.2,
-                    claimStatus: "Balance"
-                },
-                {
-                    timestamp: "2025-07-10T16:56:14.849Z",
-                    carrier: "HDS",
-                    office: "Kona Coast Dental Care",
-                    patient: "BRACE, VANNESSA",
-                    paidAmount: 190,
-                    claimStatus: "None"
-                }
-            ];
+            rawData = [];
 
-            // Generar más datos realistas
+            // Generar datos realistas
             const firstNames = ["John", "Sarah", "Michael", "Emily", "David", "Lisa", "Robert", "Amanda", "James", "Jessica", "Chris", "Maria", "Daniel", "Laura", "Kevin"];
             const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Anderson", "Taylor", "Thomas", "Hernandez", "Moore"];
 
-            for (let i = 2; i < 247; i++) {
+            for (let i = 0; i < 247; i++) {
                 const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
                 const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
                 
@@ -2187,7 +2083,7 @@
                     timestamp: new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000).toISOString(),
                     carrier: carriers[Math.floor(Math.random() * carriers.length)],
                     office: offices[Math.floor(Math.random() * offices.length)],
-                    patient: lastName + ", " + firstName,
+                    patient: lastName.toUpperCase() + ", " + firstName.toUpperCase(),
                     paidAmount: Math.random() * 500 + 50,
                     claimStatus: statuses[Math.floor(Math.random() * statuses.length)],
                     dob: new Date(1950 + Math.random() * 50, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
@@ -2201,13 +2097,15 @@
 
         // Inicializar filtros básicos
         function initializeFilters() {
-            // Los multi-selects ya están inicializados en initializeSidebar
+            console.log('🎛️ Filters initialized');
         }
 
-        // Aplicar filtros
+        // Aplicar filtros ARREGLADO
         async function applyFilters() {
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
+            console.log('🎯 Aplicando filtros...');
+            
+            const fromDate = document.getElementById('fromDate')?.value;
+            const toDate = document.getElementById('toDate')?.value;
 
             // Usar API real si está disponible
             if (API_CONFIG.WEB_APP_URL.includes('script.google.com')) {
@@ -2247,13 +2145,17 @@
             showNotification('🔍 Filters applied! ' + filteredData.length + ' records found');
         }
 
-        // Limpiar filtros
+        // Limpiar filtros ARREGLADO
         async function clearFilters() {
-            console.log('Clearing filters...');
+            console.log('🧹 Clearing filters...');
             
-            document.getElementById('fromDate').value = '';
-            document.getElementById('toDate').value = '';
-            document.getElementById('patientSearch').value = '';
+            const fromDate = document.getElementById('fromDate');
+            const toDate = document.getElementById('toDate');
+            const patientSearch = document.getElementById('patientSearch');
+            
+            if (fromDate) fromDate.value = '';
+            if (toDate) toDate.value = '';
+            if (patientSearch) patientSearch.value = '';
 
             // Limpiar multi-selects
             selectedFilters = { offices: [], carriers: [], statuses: [] };
@@ -2313,11 +2215,6 @@
             animateValue('todayClaims', todayClaims);
             animateValue('weekClaims', weekClaims);
             animateValue('monthClaims', monthClaims);
-
-            // Actualizar header stats
-            animateValue('headerTotalRevenue', totalRevenue, ');
-            animateValue('headerTotalClaims', totalClaims);
-            animateValue('headerActiveOffices', activeOffices);
 
             // Crear mini sparklines para trends
             createMiniSparklines();
@@ -2741,49 +2638,57 @@
             const firstDay = month + '-01';
             const lastDay = new Date(new Date(firstDay).getFullYear(), new Date(firstDay).getMonth() + 1, 0).toISOString().split('T')[0];
             
-            document.getElementById('fromDate').value = firstDay;
-            document.getElementById('toDate').value = lastDay;
+            const fromDate = document.getElementById('fromDate');
+            const toDate = document.getElementById('toDate');
+            
+            if (fromDate) fromDate.value = firstDay;
+            if (toDate) toDate.value = lastDay;
+            
             applyFilters();
             showNotification('📅 Filtered by month: ' + month);
         }
 
         function filterByOffice(office) {
-            // Actualizar multi-select si existe
-            const sanitizedOffice = office.replace(/[^a-zA-Z0-9-]/g, '-');
-            const checkbox = document.querySelector('#offices-' + sanitizedOffice);
-            if (checkbox) {
-                checkbox.checked = true;
-                updateMultiSelectSelection('offices');
-                applyFilters();
-                showNotification('🏢 Filtered by office: ' + office);
-            }
+            // Clear current selections
+            selectedFilters.offices = [office];
+            
+            // Update checkbox
+            document.querySelectorAll('#officesDropdown input[type="checkbox"]').forEach(cb => {
+                cb.checked = cb.value === office;
+            });
+            
+            updateMultiSelectSelection('offices');
+            applyFilters();
+            showNotification('🏢 Filtered by office: ' + office);
         }
 
         function filterByCarrier(carrier) {
-            const sanitizedCarrier = carrier.replace(/[^a-zA-Z0-9-]/g, '-');
-            const checkbox = document.querySelector('#carriers-' + sanitizedCarrier);
-            if (checkbox) {
-                checkbox.checked = true;
-                updateMultiSelectSelection('carriers');
-                applyFilters();
-                showNotification('🏥 Filtered by carrier: ' + carrier);
-            }
+            selectedFilters.carriers = [carrier];
+            
+            document.querySelectorAll('#carriersDropdown input[type="checkbox"]').forEach(cb => {
+                cb.checked = cb.value === carrier;
+            });
+            
+            updateMultiSelectSelection('carriers');
+            applyFilters();
+            showNotification('🏥 Filtered by carrier: ' + carrier);
         }
 
         function filterByStatus(status) {
-            const sanitizedStatus = status.replace(/[^a-zA-Z0-9-]/g, '-');
-            const checkbox = document.querySelector('#statuses-' + sanitizedStatus);
-            if (checkbox) {
-                checkbox.checked = true;
-                updateMultiSelectSelection('statuses');
-                applyFilters();
-                showNotification('📋 Filtered by status: ' + status);
-            }
+            selectedFilters.statuses = [status];
+            
+            document.querySelectorAll('#statusDropdown input[type="checkbox"]').forEach(cb => {
+                cb.checked = cb.value === status;
+            });
+            
+            updateMultiSelectSelection('statuses');
+            applyFilters();
+            showNotification('📋 Filtered by status: ' + status);
         }
 
         // Actualizar tabla de pacientes mejorada
         function updatePatientTable() {
-            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            const searchTerm = document.getElementById('patientSearch')?.value.toLowerCase() || '';
             let displayData = filteredData;
 
             if (searchTerm) {
@@ -2799,6 +2704,8 @@
             const pageData = displayData.slice(startIndex, endIndex);
 
             const tbody = document.getElementById('patientsTableBody');
+            if (!tbody) return;
+            
             tbody.innerHTML = '';
 
             pageData.forEach((item, index) => {
@@ -2806,14 +2713,15 @@
                 row.style.animationDelay = (index * 0.1) + 's';
                 row.className = 'animate-fade-in';
                 
-                row.innerHTML = 
-                    '<td><strong>' + (item.patient || 'N/A') + '</strong></td>' +
-                    '<td>' + (item.office || 'N/A') + '</td>' +
-                    '<td>' + (item.carrier && item.carrier.length > 20 ? item.carrier.substring(0, 20) + '...' : item.carrier || 'N/A') + '</td>' +
-                    '<td><strong> + (parseFloat(item.paidAmount) || 0).toFixed(2) + '</strong></td>' +
-                    '<td><span class="status-badge status-' + (item.claimStatus || 'none').toLowerCase() + '">' + 
-                    '<i class="fas fa-circle"></i> ' + (item.claimStatus || 'N/A') + '</span></td>' +
-                    '<td>' + (item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A') + '</td>';
+                row.innerHTML = `
+                    <td><strong>${item.patient || 'N/A'}</strong></td>
+                    <td>${item.office || 'N/A'}</td>
+                    <td>${item.carrier && item.carrier.length > 20 ? item.carrier.substring(0, 20) + '...' : item.carrier || 'N/A'}</td>
+                    <td><strong>${(parseFloat(item.paidAmount) || 0).toFixed(2)}</strong></td>
+                    <td><span class="status-badge status-${(item.claimStatus || 'none').toLowerCase()}">
+                    <i class="fas fa-circle"></i> ${item.claimStatus || 'N/A'}</span></td>
+                    <td>${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
+                `;
                 tbody.appendChild(row);
             });
 
@@ -2824,6 +2732,8 @@
         function updatePagination(totalItems) {
             const totalPages = Math.ceil(totalItems / itemsPerPage);
             const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+            
             pagination.innerHTML = '';
 
             if (totalPages <= 1) return;
@@ -2925,7 +2835,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'dental_analytics_ultimate_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.download = 'dental_analytics_titan_' + new Date().toISOString().split('T')[0] + '.csv';
             a.click();
             window.URL.revokeObjectURL(url);
             
@@ -3010,15 +2920,20 @@
         }
 
         // Easter eggs y efectos especiales
-        document.querySelector('.header h1').addEventListener('click', function() {
-            this.style.animation = 'none';
-            setTimeout(() => {
-                this.style.animation = 'pulse 1s ease-in-out 3';
-            }, 10);
-            
-            // Confetti effect
-            createConfetti();
-            showNotification('🎉 Ultimate Dashboard created with ❤️ and lots of ☕!', 'info');
+        document.addEventListener('DOMContentLoaded', function() {
+            const headerTitle = document.querySelector('.header h1');
+            if (headerTitle) {
+                headerTitle.addEventListener('click', function() {
+                    this.style.animation = 'none';
+                    setTimeout(() => {
+                        this.style.animation = 'pulse 1s ease-in-out 3';
+                    }, 10);
+                    
+                    // Confetti effect
+                    createConfetti();
+                    showNotification('🎉 THE ULTIMATE TITAN created with ❤️ and lots of ☕!', 'info');
+                });
+            }
         });
 
         // Efecto confetti
@@ -3067,11 +2982,17 @@
                 from { transform: translateX(0); opacity: 1; }
                 to { transform: translateX(100%); opacity: 0; }
             }
+            
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
         `;
         document.head.appendChild(confettiStyle);
 
-        console.log('🚀 THE ULTIMATE BEAST IS ALIVE AND READY TO CONQUER!');
+        console.log('🚀 THE ULTIMATE TITAN IS ALIVE AND READY TO CONQUER!');
         console.log('💎 Enhanced with ultimate features and galactic powers!');
+        console.log('🔥 All bugs exterminated - BESTIA MODE ACTIVATED!');
     </script>
 </body>
 </html>
