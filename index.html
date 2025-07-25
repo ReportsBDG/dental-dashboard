@@ -967,13 +967,13 @@
 </head>
 <body>
     <!-- OVERLAY -->
-    <div class="overlay" id="overlay" onclick="closeAllDropdowns()"></div>
+    <div class="overlay" id="overlay"></div>
 
     <div class="container">
         <!-- HEADER -->
         <header class="header">
             <div class="header-content">
-                <h1 onclick="showEasterEgg()">🦷 Dental Analytics Dashboard</h1>
+                <h1 id="titleHeader">🦷 Dental Analytics Dashboard</h1>
                 <p>THE ULTIMATE TITAN - Real-time insights for your dental practice</p>
             </div>
         </header>
@@ -1058,10 +1058,10 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" onclick="applyFilters()">
+                    <button class="btn btn-primary" id="applyFiltersBtn">
                         <i class="fas fa-play"></i> Apply
                     </button>
-                    <button class="btn btn-secondary" onclick="clearAllFilters()">
+                    <button class="btn btn-secondary" id="clearFiltersBtn">
                         <i class="fas fa-refresh"></i> Clear
                     </button>
                 </div>
@@ -1190,14 +1190,14 @@
                             <div class="mini-stat-label">This Month</div>
                         </div>
                     </div>
-                    <button class="export-btn" onclick="exportToCSV()">
+                    <button class="export-btn" id="exportBtn">
                         <i class="fas fa-download"></i> Export CSV
                     </button>
                 </div>
             </div>
             
             <div class="search-box">
-                <input type="text" class="search-input" id="patientSearch" placeholder="Search patients, offices, carriers..." oninput="updatePatientTable()">
+                <input type="text" class="search-input" id="patientSearch" placeholder="Search patients, offices, carriers...">
                 <i class="fas fa-search search-icon"></i>
             </div>
 
@@ -1222,10 +1222,9 @@
     </div>
 
     <script>
-        // 🚀 CONFIGURACIÓN ULTRA-SIMPLE Y ROBUSTA
+        // 🚀 CONFIGURACIÓN Y VARIABLES GLOBALES
         console.log('🚀 THE ULTIMATE TITAN IS STARTING...');
 
-        // 🎯 VARIABLES GLOBALES
         let rawData = [];
         let filteredData = [];
         let charts = {};
@@ -1246,8 +1245,6 @@
         const statuses = ["Balance", "None", "Overpayment", "Credit"];
 
         // 🚀 FUNCIONES DE DROPDOWN
-
-        // Toggle dropdown
         function toggleDropdown(dropdownId, buttonElement) {
             console.log('🎯 Toggling dropdown:', dropdownId);
             
@@ -1281,7 +1278,6 @@
             }
         }
 
-        // Cerrar todos los dropdowns
         function closeAllDropdowns() {
             console.log('🔒 Closing all dropdowns');
             document.querySelectorAll('.dropdown-content').forEach(dd => {
@@ -1293,7 +1289,6 @@
             document.getElementById('overlay').classList.remove('show');
         }
 
-        // Buscar en dropdown
         function searchDropdown(filterType, searchTerm) {
             const optionsContainer = document.getElementById(filterType + 'Options');
             const options = optionsContainer.querySelectorAll('.filter-option');
@@ -1308,7 +1303,6 @@
             });
         }
 
-        // Toggle opción individual
         function toggleFilterOption(filterType, value) {
             console.log('🔄 Toggling filter option:', filterType, value);
             
@@ -1317,16 +1311,14 @@
             const checkbox = optionElement.querySelector('.filter-checkbox');
             
             if (index === -1) {
-                // Agregar filtro
                 activeFilters[filterType].push(value);
                 optionElement.classList.add('selected');
-                checkbox.checked = true;
+                if (checkbox) checkbox.checked = true;
                 showNotification('✅ Added: ' + value, 'success');
             } else {
-                // Remover filtro
                 activeFilters[filterType].splice(index, 1);
                 optionElement.classList.remove('selected');
-                checkbox.checked = false;
+                if (checkbox) checkbox.checked = false;
                 showNotification('❌ Removed: ' + value, 'info');
             }
             
@@ -1334,7 +1326,6 @@
             updateFilterButton(filterType);
         }
 
-        // Seleccionar todas las opciones
         function selectAllInDropdown(filterType) {
             console.log('✅ Selecting all in dropdown:', filterType);
             
@@ -1348,7 +1339,7 @@
                 if (!activeFilters[filterType].includes(value)) {
                     activeFilters[filterType].push(value);
                     option.classList.add('selected');
-                    checkbox.checked = true;
+                    if (checkbox) checkbox.checked = true;
                 }
             });
             
@@ -1357,7 +1348,6 @@
             showNotification('✅ Selected all visible ' + filterType + ' options', 'success');
         }
 
-        // Limpiar todas las opciones
         function clearAllInDropdown(filterType) {
             console.log('❌ Clearing all in dropdown:', filterType);
             
@@ -1377,7 +1367,6 @@
             showNotification('❌ Cleared all ' + filterType + ' selections', 'info');
         }
 
-        // Actualizar texto del botón de filtro
         function updateFilterButton(filterType) {
             const button = document.getElementById(filterType + 'Btn');
             const span = button.querySelector('span');
@@ -1406,21 +1395,18 @@
             }
         }
 
-        // Actualizar display de filtros activos
         function updateActiveFiltersDisplay() {
             const activeFiltersBar = document.getElementById('activeFiltersBar');
             const activeFiltersList = document.getElementById('activeFiltersList');
             
             const hasActiveFilters = Object.values(activeFilters).some(arr => arr.length > 0);
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
             
-            if (hasActiveFilters) {
+            if (hasActiveFilters || fromDate || toDate) {
                 activeFiltersBar.classList.add('show');
                 
                 let filtersHTML = '';
-                
-                // Agregar filtros de fecha si existen
-                const fromDate = document.getElementById('fromDate').value;
-                const toDate = document.getElementById('toDate').value;
                 
                 if (fromDate) {
                     filtersHTML += `
@@ -1442,7 +1428,6 @@
                     `;
                 }
                 
-                // Agregar filtros dropdown
                 Object.entries(activeFilters).forEach(([filterType, values]) => {
                     if (values.length > 0) {
                         const icons = {
@@ -1475,7 +1460,6 @@
             }
         }
 
-        // Remover filtro específico
         function removeFilter(filterType) {
             console.log('🗑️ Removing filter:', filterType);
             
@@ -1487,11 +1471,9 @@
                 activeFilters[filterType] = [];
                 updateFilterButton(filterType);
                 
-                // Actualizar checkboxes
                 const optionsContainer = document.getElementById(filterType + 'Options');
                 if (optionsContainer) {
                     const options = optionsContainer.querySelectorAll('.filter-option');
-                    
                     options.forEach(option => {
                         const checkbox = option.querySelector('.filter-checkbox');
                         option.classList.remove('selected');
@@ -1504,16 +1486,13 @@
             showNotification('🗑️ Removed filter: ' + filterType, 'info');
         }
 
-        // Limpiar todos los filtros
         function clearAllFilters() {
             console.log('🧹 Clearing all filters');
             
-            // Limpiar fechas
             document.getElementById('fromDate').value = '';
             document.getElementById('toDate').value = '';
             document.getElementById('patientSearch').value = '';
             
-            // Limpiar dropdowns
             Object.keys(activeFilters).forEach(filterType => {
                 activeFilters[filterType] = [];
                 updateFilterButton(filterType);
@@ -1529,7 +1508,6 @@
                 }
             });
             
-            // Resetear datos
             filteredData = [...rawData];
             updateMetrics();
             updateCharts();
@@ -1539,7 +1517,6 @@
             showNotification('🧹 All filters cleared!', 'success');
         }
 
-        // Aplicar filtros
         function applyFilters() {
             console.log('🎯 Applying filters...');
             
@@ -1547,25 +1524,17 @@
             const toDate = document.getElementById('toDate').value;
             const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
             
-            console.log('Date filters:', fromDate, toDate);
-            console.log('Dropdown filters:', activeFilters);
-            console.log('Search term:', searchTerm);
-            
-            // Filtrar datos
             filteredData = rawData.filter(item => {
-                // Filtros de fecha
                 if (fromDate || toDate) {
                     const itemDate = new Date(item.timestamp).toISOString().split('T')[0];
                     if (fromDate && itemDate < fromDate) return false;
                     if (toDate && itemDate > toDate) return false;
                 }
                 
-                // Filtros dropdown
                 if (activeFilters.office.length > 0 && !activeFilters.office.includes(item.office)) return false;
                 if (activeFilters.carrier.length > 0 && !activeFilters.carrier.includes(item.carrier)) return false;
                 if (activeFilters.status.length > 0 && !activeFilters.status.includes(item.claimStatus)) return false;
                 
-                // Filtro de búsqueda
                 if (searchTerm) {
                     const searchableText = [
                         item.patient,
@@ -1589,11 +1558,9 @@
             showNotification(`🔍 Filters applied! Found ${filteredData.length} of ${rawData.length} records`, 'success');
         }
 
-        // Poblar opciones de dropdown
         function populateDropdownOptions() {
             console.log('🔧 Populating dropdown options...');
             
-            // Calcular valores únicos
             Object.keys(uniqueValues).forEach(filterType => {
                 uniqueValues[filterType] = {};
             });
@@ -1610,7 +1577,6 @@
                 }
             });
             
-            // Poblar cada dropdown
             Object.entries(uniqueValues).forEach(([filterType, values]) => {
                 const optionsContainer = document.getElementById(filterType + 'Options');
                 if (!optionsContainer) return;
@@ -1629,7 +1595,6 @@
             console.log('✅ Dropdown options populated');
         }
 
-        // Setup event listeners
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners...');
             
@@ -1687,10 +1652,27 @@
                 clearAllInDropdown('status');
             });
             
+            // Botones principales
+            document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+            document.getElementById('clearFiltersBtn').addEventListener('click', clearAllFilters);
+            document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+            document.getElementById('titleHeader').addEventListener('click', showEasterEgg);
+            document.getElementById('patientSearch').addEventListener('input', updatePatientTable);
+            
+            // Cerrar dropdowns al hacer click fuera
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.filter-dropdown')) {
+                    closeAllDropdowns();
+                }
+            });
+            
+            // Cerrar dropdown al hacer click en overlay
+            document.getElementById('overlay').addEventListener('click', closeAllDropdowns);
+            
             console.log('✅ Event listeners setup complete');
         }
 
-        // Actualizar métricas
+        // 🚀 FUNCIONES PRINCIPALES
         function updateMetrics() {
             console.log('📊 Updating metrics...');
             
@@ -1699,13 +1681,11 @@
             const avgClaim = totalClaims > 0 ? totalRevenue / totalClaims : 0;
             const activeOffices = [...new Set(filteredData.map(d => d.office).filter(Boolean))].length;
             
-            // Actualizar UI
             document.getElementById('totalRevenue').textContent = '$' + Math.round(totalRevenue).toLocaleString();
             document.getElementById('totalClaims').textContent = totalClaims.toLocaleString();
             document.getElementById('avgClaim').textContent = '$' + Math.round(avgClaim).toLocaleString();
             document.getElementById('activeOffices').textContent = activeOffices.toString();
             
-            // Calcular stats temporales
             const today = new Date().toISOString().split('T')[0];
             const thisWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
             const thisMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -1719,7 +1699,6 @@
             document.getElementById('monthClaims').textContent = monthClaims.toString();
         }
 
-        // Actualizar gráficos
         function updateCharts() {
             console.log('📈 Updating charts...');
             if (typeof Chart !== 'undefined') {
@@ -1730,7 +1709,6 @@
             }
         }
 
-        // Actualizar tabla de pacientes
         function updatePatientTable() {
             console.log('📋 Updating patient table...');
             
@@ -1748,14 +1726,13 @@
             const tbody = document.getElementById('patientsTableBody');
             tbody.innerHTML = '';
             
-            // Mostrar primeros 50 registros para performance
             displayData.slice(0, 50).forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><strong>${item.patient || 'N/A'}</strong></td>
                     <td>${item.office || 'N/A'}</td>
                     <td>${item.carrier || 'N/A'}</td>
-                    <td><strong>$${(parseFloat(item.paidAmount) || 0).toFixed(2)}</strong></td>
+                    <td><strong>${(parseFloat(item.paidAmount) || 0).toFixed(2)}</strong></td>
                     <td><span class="status-badge status-${(item.claimStatus || 'none').toLowerCase()}">
                         <i class="fas fa-circle"></i> ${item.claimStatus || 'N/A'}
                     </span></td>
@@ -1765,7 +1742,6 @@
             });
         }
 
-        // Export CSV
         function exportToCSV() {
             console.log('📥 Exporting CSV...');
             
@@ -1793,7 +1769,6 @@
             showNotification('📥 CSV exported successfully! ' + filteredData.length + ' records', 'success');
         }
 
-        // Mostrar notificación
         function showNotification(message, type = 'success') {
             console.log('📢 Notification:', message);
             
@@ -1818,13 +1793,11 @@
             }, 4000);
         }
 
-        // Easter egg
         function showEasterEgg() {
             console.log('🎉 Easter egg activated!');
             showNotification('🎉 THE ULTIMATE TITAN created with ❤️ and lots of ☕!', 'info');
         }
 
-        // Generar datos demo
         function generateDemoData() {
             console.log('📊 Generating demo data...');
             
@@ -1846,11 +1819,10 @@
                 });
             }
             
-            filteredData = rawData;
+            filteredData = [...rawData];
             console.log('✅ Demo data generated:', rawData.length, 'records');
         }
 
-        // Crear gráficos
         function createRevenueChart() {
             try {
                 if (typeof Chart === 'undefined') {
@@ -1876,7 +1848,6 @@
                 const labels = Object.keys(monthlyData).sort();
                 const data = labels.map(month => monthlyData[month]);
                 
-                // Destruir gráfico anterior si existe
                 if (charts.revenue && typeof charts.revenue.destroy === 'function') {
                     charts.revenue.destroy();
                 }
@@ -1944,16 +1915,10 @@
 
         function createOfficeChart() {
             try {
-                if (typeof Chart === 'undefined') {
-                    console.warn('⚠️ Chart.js not available for office chart');
-                    return;
-                }
+                if (typeof Chart === 'undefined') return;
                 
                 const ctx = document.getElementById('officeChart');
-                if (!ctx) {
-                    console.warn('⚠️ Office chart canvas not found');
-                    return;
-                }
+                if (!ctx) return;
                 
                 const officeData = {};
                 filteredData.forEach(item => {
@@ -1963,7 +1928,6 @@
                     }
                 });
                 
-                // Destruir gráfico anterior si existe
                 if (charts.office && typeof charts.office.destroy === 'function') {
                     charts.office.destroy();
                 }
@@ -2017,16 +1981,10 @@
 
         function createCarrierChart() {
             try {
-                if (typeof Chart === 'undefined') {
-                    console.warn('⚠️ Chart.js not available for carrier chart');
-                    return;
-                }
+                if (typeof Chart === 'undefined') return;
                 
                 const ctx = document.getElementById('carrierChart');
-                if (!ctx) {
-                    console.warn('⚠️ Carrier chart canvas not found');
-                    return;
-                }
+                if (!ctx) return;
                 
                 const carrierData = {};
                 filteredData.forEach(item => {
@@ -2040,7 +1998,6 @@
                     .sort(([,a], [,b]) => b - a)
                     .slice(0, 8);
                 
-                // Destruir gráfico anterior si existe
                 if (charts.carrier && typeof charts.carrier.destroy === 'function') {
                     charts.carrier.destroy();
                 }
@@ -2092,16 +2049,10 @@
 
         function createStatusChart() {
             try {
-                if (typeof Chart === 'undefined') {
-                    console.warn('⚠️ Chart.js not available for status chart');
-                    return;
-                }
+                if (typeof Chart === 'undefined') return;
                 
                 const ctx = document.getElementById('statusChart');
-                if (!ctx) {
-                    console.warn('⚠️ Status chart canvas not found');
-                    return;
-                }
+                if (!ctx) return;
                 
                 const statusData = {};
                 filteredData.forEach(item => {
@@ -2111,7 +2062,6 @@
                     }
                 });
                 
-                // Destruir gráfico anterior si existe
                 if (charts.status && typeof charts.status.destroy === 'function') {
                     charts.status.destroy();
                 }
@@ -2157,7 +2107,6 @@
             }
         }
 
-        // Inicializar fechas por defecto
         function initializeDateFilters() {
             const today = new Date();
             const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -2166,36 +2115,19 @@
             document.getElementById('toDate').value = today.toISOString().split('T')[0];
         }
 
-        // Cerrar dropdowns al hacer click fuera
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.filter-dropdown') && !e.target.closest('.overlay')) {
-                closeAllDropdowns();
-            }
-        });
-
         // 🚀 INICIALIZACIÓN PRINCIPAL
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 DOM Content Loaded - Initializing ULTIMATE TITAN...');
             
             try {
-                // Inicializar fechas
                 initializeDateFilters();
-                
-                // Generar datos demo
                 generateDemoData();
-                
-                // Setup event listeners
                 setupEventListeners();
-                
-                // Poblar dropdowns
                 populateDropdownOptions();
-                
-                // Actualizar todo
                 updateMetrics();
                 updateCharts();
                 updatePatientTable();
                 
-                // Mostrar éxito
                 showNotification('🚀 THE ULTIMATE TITAN with Smart Dropdown Filters is ready!', 'success');
                 console.log('✅ TITAN initialized successfully with dropdown filtering!');
                 
@@ -2205,14 +2137,6 @@
             }
         });
 
-        // Cerrar dropdowns al hacer click fuera
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.filter-dropdown') && !e.target.closest('.overlay')) {
-                closeAllDropdowns();
-            }
-        });
-
-        // Log de estado
         console.log('📋 TITAN script loaded successfully');
         console.log('🎯 All functions defined and ready');
         console.log('⚡ Waiting for DOM to be ready...');
