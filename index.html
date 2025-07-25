@@ -211,85 +211,425 @@
             color: var(--primary);
         }
 
-        /* MULTI-SELECT FILTERS */
-        .multi-select-container {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .multi-select-trigger {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            background: white;
-            cursor: pointer;
+        /* COLUMN SELECTOR - ULTRA INTUITIVO */
+        .column-selector {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .column-option {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 16px;
+            cursor: pointer;
             transition: var(--transition);
-            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .multi-select-trigger:hover {
-            border-color: var(--primary-light);
-            transform: translateY(-1px);
-        }
-
-        .multi-select-trigger.active {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-        }
-
-        .multi-select-dropdown {
+        .column-option::before {
+            content: '';
             position: absolute;
-            top: 100%;
+            top: 0;
             left: 0;
             right: 0;
-            background: white;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            box-shadow: var(--shadow-lg);
-            max-height: 250px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-        }
-
-        .multi-select-dropdown.show {
-            display: block;
-        }
-
-        .multi-select-option {
-            padding: 12px 16px;
-            cursor: pointer;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
             transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
         }
 
-        .multi-select-option:hover {
-            background: var(--bg-secondary);
+        .column-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, #FFFFFF 0%, #F0F8FF 100%);
         }
 
-        .multi-select-option.selected {
+        .column-option:hover::before {
+            transform: scaleX(1);
+        }
+
+        .column-option:active {
+            transform: translateY(-1px);
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
         }
 
-        .multi-select-option input[type="checkbox"] {
-            accent-color: var(--primary);
+        .column-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-secondary), #E8F4FD);
+            border-radius: 12px;
+            flex-shrink: 0;
         }
 
-        .selected-count {
+        .column-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .column-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .column-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.3;
+        }
+
+        .column-count {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(0, 102, 204, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 4px;
+            width: fit-content;
+        }
+
+        .column-arrow {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .column-option:hover .column-arrow {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        /* FILTER HEADER */
+        .filter-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .back-btn {
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
             background: var(--primary);
             color: white;
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.75rem;
+            transform: translateX(-3px);
+        }
+
+        #currentFilterTitle {
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #currentFilterIcon {
+            font-size: 1.3rem;
+        }
+
+        /* DYNAMIC FILTER CONTENT */
+        .filter-options-grid {
+            display: grid;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .filter-option-item {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .filter-option-item:hover {
+            border-color: var(--primary-light);
+            background: #F0F8FF;
+            transform: translateX(5px);
+        }
+
+        .filter-option-item.selected {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .filter-option-item.selected::before {
+            content: '✓';
+            position: absolute;
+            right: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .option-text {
             font-weight: 600;
+            flex: 1;
+        }
+
+        .option-count {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 10px;
+        }
+
+        .filter-option-item:not(.selected) .option-count {
+            background: var(--bg-secondary);
+            color: var(--text-light);
+        }
+
+        /* SEARCH IN FILTER */
+        .filter-search {
+            margin-bottom: 15px;
+        }
+
+        .filter-search input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .filter-search input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        /* RANGE SLIDER */
+        .range-filter {
+            padding: 10px 0;
+        }
+
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .range-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 102, 204, 0.3);
+        }
+
+        .range-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 102, 204, 0.3);
+        }
+
+        /* DATE PICKER */
+        .date-filter {
+            display: grid;
+            gap: 15px;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .date-input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-input-group input {
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .date-input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        /* ACTIVE FILTERS */
+        .active-filter-item {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .active-filter-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+        }
+
+        .active-filter-icon {
+            font-size: 1rem;
+        }
+
+        .active-filter-text {
+            flex: 1;
+        }
+
+        .remove-filter-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.7rem;
+        }
+
+        .remove-filter-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* QUICK FILTER PRESETS */
+        .quick-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quick-filter-btn {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .quick-filter-btn:hover {
+            border-color: var(--primary);
+            background: #F0F8FF;
+            transform: translateY(-2px);
+        }
+
+        .quick-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* SELECT ALL/NONE */
+        .selection-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .selection-btn {
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-light);
+        }
+
+        .selection-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
         }
 
         /* OVERLAY */
@@ -891,52 +1231,113 @@
     </style>
 </head>
 <body>
-    <!-- FILTERS SIDEBAR -->
+    <!-- FILTERS SIDEBAR - ULTRA INTUITIVO -->
     <div class="sidebar" id="filtersSidebar">
         <div class="sidebar-header">
             <button class="close-sidebar" onclick="closeSidebar('filtersSidebar')">
                 <i class="fas fa-times"></i>
             </button>
-            <h2><i class="fas fa-filter"></i> Advanced Filters</h2>
-            <p>Filter your data precisely</p>
+            <h2><i class="fas fa-magic"></i> Smart Filters</h2>
+            <p>Choose what to filter by - super easy!</p>
         </div>
 
+        <!-- SELECTOR DE COLUMNAS -->
         <div class="sidebar-section">
-            <h3><i class="fas fa-building"></i> Offices</h3>
-            <div class="multi-select-container">
-                <div class="multi-select-trigger" onclick="toggleDropdown('officesDropdown', this)">
-                    <span id="officesText">All Offices</span>
-                    <i class="fas fa-chevron-down"></i>
+            <h3><i class="fas fa-columns"></i> What do you want to filter by?</h3>
+            <div class="column-selector">
+                <div class="column-option" onclick="selectFilterColumn('office')">
+                    <div class="column-icon">🏢</div>
+                    <div class="column-info">
+                        <div class="column-name">Office Location</div>
+                        <div class="column-desc">Filter by dental office</div>
+                        <div class="column-count" id="officeCount">5 options</div>
+                    </div>
+                    <div class="column-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
-                <div class="multi-select-dropdown" id="officesDropdown">
-                    <!-- Options populated by JS -->
+
+                <div class="column-option" onclick="selectFilterColumn('carrier')">
+                    <div class="column-icon">🏥</div>
+                    <div class="column-info">
+                        <div class="column-name">Insurance Carrier</div>
+                        <div class="column-desc">Filter by insurance company</div>
+                        <div class="column-count" id="carrierCount">6 options</div>
+                    </div>
+                    <div class="column-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="column-option" onclick="selectFilterColumn('claimStatus')">
+                    <div class="column-icon">📋</div>
+                    <div class="column-info">
+                        <div class="column-name">Claim Status</div>
+                        <div class="column-desc">Filter by claim status</div>
+                        <div class="column-count" id="statusCount">4 options</div>
+                    </div>
+                    <div class="column-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="column-option" onclick="selectFilterColumn('patient')">
+                    <div class="column-icon">👤</div>
+                    <div class="column-info">
+                        <div class="column-name">Patient Name</div>
+                        <div class="column-desc">Search specific patients</div>
+                        <div class="column-count" id="patientCount">247 patients</div>
+                    </div>
+                    <div class="column-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="column-option" onclick="selectFilterColumn('paidAmount')">
+                    <div class="column-icon">💰</div>
+                    <div class="column-info">
+                        <div class="column-name">Paid Amount</div>
+                        <div class="column-desc">Filter by payment range</div>
+                        <div class="column-count" id="amountRange">$50 - $500</div>
+                    </div>
+                    <div class="column-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="column-option" onclick="selectFilterColumn('timestamp')">
+                    <div class="column-icon">📅</div>
+                    <div class="column-info">
+                        <div class="column-name">Date Range</div>
+                        <div class="column-desc">Filter by specific dates</div>
+                        <div class="column-count" id="dateRange">Last 6 months</div>
+                    </div>
+                    <div class="column-arrow"><i class="fas fa-chevron-right"></i></div>
                 </div>
             </div>
         </div>
 
-        <div class="sidebar-section">
-            <h3><i class="fas fa-shield-alt"></i> Carriers</h3>
-            <div class="multi-select-container">
-                <div class="multi-select-trigger" onclick="toggleDropdown('carriersDropdown', this)">
-                    <span id="carriersText">All Carriers</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="multi-select-dropdown" id="carriersDropdown">
-                    <!-- Options populated by JS -->
-                </div>
+        <!-- PANEL DE FILTRO DINÁMICO -->
+        <div class="sidebar-section" id="dynamicFilterPanel" style="display: none;">
+            <div class="filter-header">
+                <button class="back-btn" onclick="goBackToColumnSelector()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h3 id="currentFilterTitle">
+                    <span id="currentFilterIcon">🏢</span>
+                    <span id="currentFilterName">Office Location</span>
+                </h3>
+            </div>
+
+            <!-- CONTENIDO DINÁMICO SEGÚN EL TIPO DE FILTRO -->
+            <div id="filterContent">
+                <!-- Se popula dinámicamente -->
             </div>
         </div>
 
-        <div class="sidebar-section">
-            <h3><i class="fas fa-tasks"></i> Status</h3>
-            <div class="multi-select-container">
-                <div class="multi-select-trigger" onclick="toggleDropdown('statusDropdown', this)">
-                    <span id="statusText">All Statuses</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="multi-select-dropdown" id="statusDropdown">
-                    <!-- Options populated by JS -->
-                </div>
+        <!-- FILTROS ACTIVOS -->
+        <div class="sidebar-section" id="activeFiltersSection" style="display: none;">
+            <h3><i class="fas fa-check-circle"></i> Active Filters</h3>
+            <div id="activeFiltersList">
+                <!-- Se popula dinámicamente -->
+            </div>
+            <div class="filter-actions" style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="applySmartFilters()">
+                    <i class="fas fa-magic"></i> Apply Filters
+                </button>
+                <button class="btn btn-secondary" onclick="clearAllSmartFilters()">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
             </div>
         </div>
     </div>
@@ -1170,15 +1571,449 @@
         // 🚀 CONFIGURACIÓN ULTRA-SIMPLE Y ROBUSTA
         console.log('🚀 THE ULTIMATE TITAN IS STARTING...');
 
-        // Variables globales simples
-        let rawData = [];
-        let filteredData = [];
-        let charts = {};
-        let selectedFilters = {
-            offices: [],
-            carriers: [],
-            statuses: []
-        };
+        // 🎯 SMART FILTERS - SISTEMA ULTRA INTUITIVO
+        let smartFilters = {};
+        let currentFilterColumn = null;
+        let uniqueValues = {};
+
+        // Seleccionar columna para filtrar
+        function selectFilterColumn(columnName) {
+            console.log('🎯 Selecting filter column:', columnName);
+            
+            currentFilterColumn = columnName;
+            
+            // Mostrar panel dinámico
+            document.getElementById('dynamicFilterPanel').style.display = 'block';
+            
+            // Actualizar header
+            const columnConfig = {
+                office: { icon: '🏢', name: 'Office Location' },
+                carrier: { icon: '🏥', name: 'Insurance Carrier' },
+                claimStatus: { icon: '📋', name: 'Claim Status' },
+                patient: { icon: '👤', name: 'Patient Name' },
+                paidAmount: { icon: '💰', name: 'Paid Amount' },
+                timestamp: { icon: '📅', name: 'Date Range' }
+            };
+            
+            const config = columnConfig[columnName];
+            document.getElementById('currentFilterIcon').textContent = config.icon;
+            document.getElementById('currentFilterName').textContent = config.name;
+            
+            // Generar contenido específico
+            generateFilterContent(columnName);
+            
+            showNotification('📊 Filter options loaded for: ' + config.name, 'info');
+        }
+
+        // Volver al selector de columnas
+        function goBackToColumnSelector() {
+            console.log('🔙 Going back to column selector');
+            document.getElementById('dynamicFilterPanel').style.display = 'none';
+            currentFilterColumn = null;
+        }
+
+        // Generar contenido de filtro dinámico
+        function generateFilterContent(columnName) {
+            console.log('🔧 Generating filter content for:', columnName);
+            
+            const filterContent = document.getElementById('filterContent');
+            
+            // Calcular valores únicos para esta columna
+            calculateUniqueValues(columnName);
+            
+            switch(columnName) {
+                case 'office':
+                case 'carrier':
+                case 'claimStatus':
+                    generateSelectFilter(columnName, filterContent);
+                    break;
+                case 'patient':
+                    generateSearchFilter(columnName, filterContent);
+                    break;
+                case 'paidAmount':
+                    generateRangeFilter(columnName, filterContent);
+                    break;
+                case 'timestamp':
+                    generateDateFilter(columnName, filterContent);
+                    break;
+            }
+        }
+
+        // Calcular valores únicos para cualquier columna
+        function calculateUniqueValues(columnName) {
+            console.log('📊 Calculating unique values for:', columnName);
+            
+            const values = {};
+            
+            filteredData.forEach(item => {
+                const value = item[columnName];
+                if (value && value.toString().trim()) {
+                    const key = value.toString().trim();
+                    values[key] = (values[key] || 0) + 1;
+                }
+            });
+            
+            uniqueValues[columnName] = values;
+            console.log('✅ Found', Object.keys(values).length, 'unique values for', columnName);
+        }
+
+        // Generar filtro de selección (para oficinas, carriers, etc.)
+        function generateSelectFilter(columnName, container) {
+            const values = uniqueValues[columnName];
+            const sortedValues = Object.entries(values).sort(([,a], [,b]) => b - a);
+            
+            container.innerHTML = `
+                <div class="selection-controls">
+                    <button class="selection-btn" onclick="selectAllOptions('${columnName}')">
+                        <i class="fas fa-check-double"></i> Select All
+                    </button>
+                    <button class="selection-btn" onclick="selectNoneOptions('${columnName}')">
+                        <i class="fas fa-times"></i> Clear All
+                    </button>
+                </div>
+                
+                <div class="filter-search">
+                    <input type="text" placeholder="Search ${columnName}..." oninput="searchFilterOptions('${columnName}', this.value)">
+                </div>
+                
+                <div class="filter-options-grid" id="filterOptionsGrid">
+                    ${sortedValues.map(([value, count]) => `
+                        <div class="filter-option-item" onclick="toggleFilterOption('${columnName}', '${value.replace(/'/g, "\\'")}')">
+                            <span class="option-text">${value}</span>
+                            <span class="option-count">${count} records</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Marcar opciones ya seleccionadas
+            if (smartFilters[columnName]) {
+                smartFilters[columnName].forEach(selectedValue => {
+                    const option = container.querySelector(`[onclick*="'${selectedValue.replace(/'/g, "\\'")}']`);
+                    if (option) {
+                        option.classList.add('selected');
+                    }
+                });
+            }
+        }
+
+        // Generar filtro de búsqueda (para pacientes)
+        function generateSearchFilter(columnName, container) {
+            const values = uniqueValues[columnName];
+            const sortedValues = Object.entries(values).sort(([a], [b]) => a.localeCompare(b));
+            
+            container.innerHTML = `
+                <div class="filter-search">
+                    <input type="text" placeholder="Type patient name..." oninput="searchPatients(this.value)" style="font-size: 1rem; padding: 15px;">
+                </div>
+                
+                <div class="quick-filters">
+                    <div class="quick-filter-btn" onclick="filterPatientsByLetter('A-M')">A - M</div>
+                    <div class="quick-filter-btn" onclick="filterPatientsByLetter('N-Z')">N - Z</div>
+                </div>
+                
+                <div class="filter-options-grid" id="filterOptionsGrid" style="max-height: 250px;">
+                    ${sortedValues.slice(0, 50).map(([value, count]) => `
+                        <div class="filter-option-item" onclick="toggleFilterOption('${columnName}', '${value.replace(/'/g, "\\'")}')">
+                            <span class="option-text">${value}</span>
+                            <span class="option-count">${count} visits</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="text-align: center; padding: 10px; color: var(--text-light); font-size: 0.85rem;">
+                    Showing first 50 patients. Use search to find specific patients.
+                </div>
+            `;
+        }
+
+        // Generar filtro de rango (para montos)
+        function generateRangeFilter(columnName, container) {
+            const amounts = filteredData.map(item => parseFloat(item[columnName]) || 0).filter(amount => amount > 0);
+            const minAmount = Math.min(...amounts);
+            const maxAmount = Math.max(...amounts);
+            const avgAmount = amounts.reduce((sum, amount) => sum + amount, 0) / amounts.length;
+            
+            container.innerHTML = `
+                <div class="range-filter">
+                    <div class="range-values">
+                        <span>$<span id="minValue">${Math.round(minAmount)}</span></span>
+                        <span>$<span id="maxValue">${Math.round(maxAmount)}</span></span>
+                    </div>
+                    
+                    <input type="range" class="range-slider" id="minRange" 
+                           min="${minAmount}" max="${maxAmount}" value="${minAmount}"
+                           oninput="updateRangeFilter('min', this.value)">
+                    
+                    <input type="range" class="range-slider" id="maxRange" 
+                           min="${minAmount}" max="${maxAmount}" value="${maxAmount}"
+                           oninput="updateRangeFilter('max', this.value)" style="margin-top: 10px;">
+                </div>
+                
+                <div class="quick-filters">
+                    <div class="quick-filter-btn" onclick="setAmountRange(0, ${Math.round(avgAmount)})">Below Average</div>
+                    <div class="quick-filter-btn" onclick="setAmountRange(${Math.round(avgAmount)}, ${Math.round(maxAmount)})">Above Average</div>
+                    <div class="quick-filter-btn" onclick="setAmountRange(${Math.round(maxAmount * 0.8)}, ${Math.round(maxAmount)})">High Value</div>
+                    <div class="quick-filter-btn" onclick="setAmountRange(${Math.round(minAmount)}, ${Math.round(maxAmount * 0.2)})">Low Value</div>
+                </div>
+                
+                <div style="text-align: center; padding: 15px; background: var(--bg-secondary); border-radius: 10px; margin-top: 15px;">
+                    <div style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 5px;">Statistics</div>
+                    <div style="font-weight: 600; color: var(--primary);">
+                        Average: ${Math.round(avgAmount)} | Total Records: ${amounts.length}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generar filtro de fecha
+        function generateDateFilter(columnName, container) {
+            const dates = filteredData.map(item => new Date(item[columnName])).filter(date => !isNaN(date));
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            
+            container.innerHTML = `
+                <div class="date-filter">
+                    <div class="date-input-group">
+                        <label>From Date</label>
+                        <input type="date" id="smartFromDate" value="${minDate.toISOString().split('T')[0]}" onchange="updateDateFilter()">
+                    </div>
+                    
+                    <div class="date-input-group">
+                        <label>To Date</label>
+                        <input type="date" id="smartToDate" value="${maxDate.toISOString().split('T')[0]}" onchange="updateDateFilter()">
+                    </div>
+                </div>
+                
+                <div class="quick-filters">
+                    <div class="quick-filter-btn" onclick="setDateRange('today')">Today</div>
+                    <div class="quick-filter-btn" onclick="setDateRange('week')">This Week</div>
+                    <div class="quick-filter-btn" onclick="setDateRange('month')">This Month</div>
+                    <div class="quick-filter-btn" onclick="setDateRange('quarter')">This Quarter</div>
+                </div>
+                
+                <div style="text-align: center; padding: 15px; background: var(--bg-secondary); border-radius: 10px; margin-top: 15px;">
+                    <div style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 5px;">Date Range Available</div>
+                    <div style="font-weight: 600; color: var(--primary);">
+                        ${minDate.toLocaleDateString()} to ${maxDate.toLocaleDateString()}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle opción de filtro
+        function toggleFilterOption(columnName, value) {
+            console.log('🔄 Toggling filter option:', columnName, value);
+            
+            if (!smartFilters[columnName]) {
+                smartFilters[columnName] = [];
+            }
+            
+            const index = smartFilters[columnName].indexOf(value);
+            const optionElement = event.target.closest('.filter-option-item');
+            
+            if (index === -1) {
+                smartFilters[columnName].push(value);
+                optionElement.classList.add('selected');
+                showNotification('✅ Added: ' + value, 'success');
+            } else {
+                smartFilters[columnName].splice(index, 1);
+                optionElement.classList.remove('selected');
+                showNotification('❌ Removed: ' + value, 'info');
+            }
+            
+            updateActiveFiltersDisplay();
+        }
+
+        // Seleccionar todas las opciones
+        function selectAllOptions(columnName) {
+            console.log('✅ Selecting all options for:', columnName);
+            
+            smartFilters[columnName] = Object.keys(uniqueValues[columnName]);
+            
+            document.querySelectorAll('#filterOptionsGrid .filter-option-item').forEach(option => {
+                option.classList.add('selected');
+            });
+            
+            updateActiveFiltersDisplay();
+            showNotification('✅ Selected all ' + columnName + ' options', 'success');
+        }
+
+        // Deseleccionar todas las opciones
+        function selectNoneOptions(columnName) {
+            console.log('❌ Clearing all options for:', columnName);
+            
+            smartFilters[columnName] = [];
+            
+            document.querySelectorAll('#filterOptionsGrid .filter-option-item').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            updateActiveFiltersDisplay();
+            showNotification('❌ Cleared all ' + columnName + ' selections', 'info');
+        }
+
+        // Buscar opciones de filtro
+        function searchFilterOptions(columnName, searchTerm) {
+            const options = document.querySelectorAll('#filterOptionsGrid .filter-option-item');
+            const term = searchTerm.toLowerCase();
+            
+            options.forEach(option => {
+                const text = option.querySelector('.option-text').textContent.toLowerCase();
+                if (text.includes(term)) {
+                    option.style.display = 'flex';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+
+        // Actualizar display de filtros activos
+        function updateActiveFiltersDisplay() {
+            const activeFiltersSection = document.getElementById('activeFiltersSection');
+            const activeFiltersList = document.getElementById('activeFiltersList');
+            
+            const hasActiveFilters = Object.keys(smartFilters).some(key => 
+                smartFilters[key] && smartFilters[key].length > 0
+            );
+            
+            if (hasActiveFilters) {
+                activeFiltersSection.style.display = 'block';
+                
+                const filterItems = Object.entries(smartFilters)
+                    .filter(([key, values]) => values && values.length > 0)
+                    .map(([key, values]) => {
+                        const config = {
+                            office: { icon: '🏢', name: 'Office' },
+                            carrier: { icon: '🏥', name: 'Carrier' },
+                            claimStatus: { icon: '📋', name: 'Status' },
+                            patient: { icon: '👤', name: 'Patient' },
+                            paidAmount: { icon: '💰', name: 'Amount' },
+                            timestamp: { icon: '📅', name: 'Date' }
+                        };
+                        
+                        const conf = config[key] || { icon: '📊', name: key };
+                        const displayText = values.length === 1 ? values[0] : `${values.length} selected`;
+                        
+                        return `
+                            <div class="active-filter-item">
+                                <span class="active-filter-icon">${conf.icon}</span>
+                                <span class="active-filter-text">${conf.name}: ${displayText}</span>
+                                <button class="remove-filter-btn" onclick="removeSmartFilter('${key}')">×</button>
+                            </div>
+                        `;
+                    }).join('');
+                
+                activeFiltersList.innerHTML = filterItems;
+            } else {
+                activeFiltersSection.style.display = 'none';
+            }
+        }
+
+        // Remover filtro específico
+        function removeSmartFilter(columnName) {
+            console.log('🗑️ Removing smart filter:', columnName);
+            
+            delete smartFilters[columnName];
+            updateActiveFiltersDisplay();
+            
+            // Si estamos viendo este filtro, actualizar la vista
+            if (currentFilterColumn === columnName) {
+                generateFilterContent(columnName);
+            }
+            
+            showNotification('🗑️ Removed filter: ' + columnName, 'info');
+        }
+
+        // Limpiar todos los filtros inteligentes
+        function clearAllSmartFilters() {
+            console.log('🧹 Clearing all smart filters');
+            
+            smartFilters = {};
+            updateActiveFiltersDisplay();
+            
+            // Si hay un filtro abierto, actualizar la vista
+            if (currentFilterColumn) {
+                generateFilterContent(currentFilterColumn);
+            }
+            
+            showNotification('🧹 All smart filters cleared!', 'success');
+        }
+
+        // Aplicar filtros inteligentes
+        function applySmartFilters() {
+            console.log('🎯 Applying smart filters:', smartFilters);
+            
+            // Combinar con filtros de fecha básicos
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            
+            filteredData = rawData.filter(item => {
+                // Filtros de fecha básicos
+                if (fromDate || toDate) {
+                    const itemDate = new Date(item.timestamp).toISOString().split('T')[0];
+                    if (fromDate && itemDate < fromDate) return false;
+                    if (toDate && itemDate > toDate) return false;
+                }
+                
+                // Filtros inteligentes
+                for (const [columnName, values] of Object.entries(smartFilters)) {
+                    if (values && values.length > 0) {
+                        const itemValue = item[columnName];
+                        if (!itemValue || !values.includes(itemValue.toString())) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Actualizar todo
+            updateMetrics();
+            updateCharts();
+            updatePatientTable();
+            updateColumnCounts();
+            
+            // Cerrar sidebar
+            closeSidebar('filtersSidebar');
+            
+            const totalFilters = Object.keys(smartFilters).length;
+            showNotification(`🎉 Applied ${totalFilters} smart filters! Found ${filteredData.length} records`, 'success');
+        }
+
+        // Actualizar contadores de columnas
+        function updateColumnCounts() {
+            // Recalcular valores únicos para todas las columnas
+            const columns = ['office', 'carrier', 'claimStatus', 'patient', 'paidAmount', 'timestamp'];
+            
+            columns.forEach(column => {
+                calculateUniqueValues(column);
+                
+                const countElement = document.getElementById(column + 'Count');
+                if (countElement) {
+                    const count = Object.keys(uniqueValues[column] || {}).length;
+                    if (column === 'patient') {
+                        countElement.textContent = count + ' patients';
+                    } else if (column === 'paidAmount') {
+                        const amounts = Object.keys(uniqueValues[column] || {}).map(v => parseFloat(v)).filter(v => v > 0);
+                        if (amounts.length > 0) {
+                            const min = Math.min(...amounts);
+                            const max = Math.max(...amounts);
+                            countElement.textContent = `${Math.round(min)} - ${Math.round(max)}`;
+                        }
+                    } else if (column === 'timestamp') {
+                        const dates = Object.keys(uniqueValues[column] || {}).map(v => new Date(v)).filter(d => !isNaN(d));
+                        if (dates.length > 0) {
+                            const daysDiff = Math.ceil((Math.max(...dates) - Math.min(...dates)) / (1000 * 60 * 60 * 24));
+                            countElement.textContent = `${daysDiff} days range`;
+                        }
+                    } else {
+                        countElement.textContent = count + ' options';
+                    }
+                }
+            });
+        }
 
         // Datos base
         const offices = ["Leon Springs", "Kona Coast Dental Care", "Hollywood Park", "Potranco", "Pleasanton"];
@@ -1738,16 +2573,13 @@
             }
         });
 
-        // 🚀 INICIALIZACIÓN PRINCIPAL
+        // 🚀 INICIALIZACIÓN PRINCIPAL - CON SMART FILTERS
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM Content Loaded - Initializing TITAN...');
+            console.log('🚀 DOM Content Loaded - Initializing ULTIMATE TITAN...');
             
             try {
                 // Inicializar fechas
                 initializeDateFilters();
-                
-                // Inicializar multi-selects
-                initializeMultiSelects();
                 
                 // Generar datos demo
                 generateDemoData();
@@ -1756,10 +2588,11 @@
                 updateMetrics();
                 updateCharts();
                 updatePatientTable();
+                updateColumnCounts();
                 
                 // Mostrar éxito
-                showNotification('🚀 THE ULTIMATE TITAN is ready!', 'success');
-                console.log('✅ TITAN initialized successfully!');
+                showNotification('🚀 THE ULTIMATE TITAN with SMART FILTERS is ready!', 'success');
+                console.log('✅ TITAN initialized successfully with smart filtering!');
                 
             } catch (error) {
                 console.error('❌ Error initializing TITAN:', error);
