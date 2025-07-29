@@ -1,5 +1,8 @@
 "use client"
 
+// Dashboard Application - Bays Dental Analytics
+// Resolved merge conflicts - Ready for deployment
+
 import React from 'react'
 import { DashboardHeader } from '@/components/dashboard-header'
 import { ChartsSection } from '@/components/charts-section'
