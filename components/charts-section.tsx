@@ -3,7 +3,7 @@
 import React from 'react'
 
 interface PatientRecord {
-  timestamp: string
+    timestamp: string
   insurancecarrier: string
   offices: string
   patientname: string
@@ -23,13 +23,13 @@ interface PatientRecord {
 }
 
 interface ChartConfig {
-  id: string
-  title: string
-  type: "line" | "bar" | "doughnut" | "polarArea"
-  visible: boolean
-  showLegend: boolean
-  showDataLabels: boolean
-  animated: boolean
+    id: string
+    title: string
+    type: "line" | "bar" | "doughnut" | "polarArea"
+    visible: boolean
+    showLegend: boolean
+    showDataLabels: boolean
+    animated: boolean
 }
 
 interface ChartsSectionProps {
@@ -188,7 +188,7 @@ export function ChartsSection({ data, filters }: ChartsSectionProps) {
     if (!config.visible) return null
 
     const getChartData = () => {
-      switch (config.id) {
+    switch (config.id) {
         case "claim-status-distribution":
           return Object.entries(chartData.claimStatusDistribution)
             .sort(([,a], [,b]) => b - a)
@@ -346,8 +346,8 @@ export function ChartsSection({ data, filters }: ChartsSectionProps) {
             <div className="text-2xl font-bold text-slate-900">{total}</div>
             <div className="text-sm text-slate-600">Total</div>
           </div>
-        </div>
-      </div>
+              </div>
+              </div>
     )
   }
 
@@ -495,7 +495,7 @@ export function ChartsSection({ data, filters }: ChartsSectionProps) {
           <span className="text-white text-sm">Active charts: {chartConfigs.filter(c => c.visible).length}</span>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {chartConfigs.map(renderChart)}
       </div>
