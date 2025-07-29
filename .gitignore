@@ -3,17 +3,44 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 
-# Next.js build outputs
+# Next.js
 .next/
 out/
 build/
 dist/
 
-# Production builds
-*.tgz
-*.tar.gz
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs
+*.log
 
 # Runtime data
 pids
@@ -23,34 +50,24 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage/
-*.lcov
 
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage
-.grunt
-
-# Bower dependency directory
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons
-build/Release
-
 # Dependency directories
 jspm_packages/
-
-# TypeScript cache
-*.tsbuildinfo
 
 # Optional npm cache directory
 .npm
 
 # Optional eslint cache
 .eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
 
 # Optional REPL history
 .node_repl_history
@@ -61,117 +78,27 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.development
-.env.production
-
-# Vercel deployment outputs
-.vercel
-
-# Parcel-bundler cache
+# parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
 
-# Next.js cache
-.next/
+# next.js build output
+.next
 
-# Nuxt.js build / generate output
+# nuxt.js build output
 .nuxt
 
-# Gatsby files
-.cache/
-public
+# vuepress build output
+.vuepress/dist
 
-# Storybook build outputs
-.out
-.storybook-out
+# Serverless directories
+.serverless
 
-# Temporary folders
-tmp/
-temp/
+# FuseBox cache
+.fusebox/
 
-# Logs
-logs
-*.log
+# DynamoDB Local files
+.dynamodb/
 
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Windows Folder config file
-Desktop.ini
-
-# Windows Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Mac crap
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# Google Apps Script files (if any local copies)
-*.gs.json
-clasp.json
-
-# Backup files
-*.bak
-*.backup
-*.tmp
-
-# Database files (if any local SQLite, etc.)
-*.db
-*.sqlite
-*.sqlite3
-
-# Package manager lock files (choose one based on your preference)
-# package-lock.json  # Uncomment if using yarn exclusively
-# yarn.lock          # Uncomment if using npm exclusively
-
-# Testing
-/coverage
-
-# Analytics and monitoring
-.sentryclirc
-
-# PWA files
-**/sw.js
-**/workbox-*.js
-**/fallback-*.js
-
-# Sentry Config File
-.sentryclirc
+# TernJS port file
+.tern-port
